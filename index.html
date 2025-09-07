@@ -1,0 +1,5171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<style>
+/* ========== 基础重置和布局 ========== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ========== 头部样式 ========== */
+.header {
+    background: #2c5aa0;
+    color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(44, 90, 160, 0.1);
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 1rem;
+    opacity: 0.9;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ========== 主要布局 ========== */
+.main-layout {
+    display: flex;
+    gap: 20px;
+    min-height: 70vh;
+    align-items: flex-start;
+}
+
+.left-panel {
+    flex: 1;
+    min-width: 60%;
+}
+
+.right-panel {
+    flex: 0 0 400px;
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== 卡片样式 ========== */
+.card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+    color: #2c5aa0;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* ========== 上传区域样式 ========== */
+.upload-area {
+    border: 2px dashed #2c5aa0;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background: #fafafa;
+    display: block;
+    overflow: hidden;
+}
+
+.upload-area:hover {
+    border-color: #1e3d6f;
+    background: #f0f8ff;
+    transform: translateY(-2px);
+}
+
+.upload-area.dragover {
+    border-color: #28a745;
+    background: #e8f5e8;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #2c5aa0;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+}
+
+.upload-area p {
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+    margin: 4px 0;
+}
+
+.upload-area p:first-of-type {
+    font-weight: 600;
+    color: #2c5aa0;
+}
+
+.file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* ========== 按钮样式 ========== */
+.btn {
+    background: #2c5aa0;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn:hover {
+    background: #1e3d6f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(44, 90, 160, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+/* ========== 加载状态 ========== */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e9ecef;
+    border-top: 3px solid #2c5aa0;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading h3 {
+    color: #2c5aa0;
+    margin-bottom: 10px;
+}
+
+.loading p {
+    color: #666;
+}
+
+/* ========== 错误提示 ========== */
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #f5c6cb;
+    margin: 15px 0;
+    display: none;
+    font-weight: 500;
+}
+
+/* ========== 结果区域 ========== */
+.results {
+    display: none;
+}
+
+/* ========== 问题诊断 ========== */
+.issue-item {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border-left: 4px solid;
+}
+
+.issue-item.high {
+    background: #fff5f5;
+    border-left-color: #dc3545;
+}
+
+.issue-item.medium {
+    background: #fff8e1;
+    border-left-color: #ffc107;
+}
+
+.issue-item.low {
+    background: #f8f9fa;
+    border-left-color: #6c757d;
+}
+
+.issue-item.good {
+    background: #f0f9ff;
+    border-left-color: #28a745;
+}
+
+.issue-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.issue-title.high {
+    color: #dc3545;
+}
+
+.issue-title.medium {
+    color: #ffc107;
+}
+
+.issue-title.low {
+    color: #6c757d;
+}
+
+.issue-title.good {
+    color: #28a745;
+}
+
+/* ========== 图表容器 ========== */
+.chart-container {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#frequencyChart {
+    width: 100%;
+    height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+/* ========== 曲线控制 ========== */
+.curve-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.curve-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.curve-toggle:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.curve-toggle.active {
+    background: #e3f2fd;
+    border-color: #2c5aa0;
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
+.curve-color {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* ========== 频率范围显示 ========== */
+.frequency-limits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.limit-box {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.limit-box:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.limit-title {
+    font-weight: 600;
+    color: #2c5aa0;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.limit-value {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 5px 0;
+    font-weight: 700;
+}
+
+.limit-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* ========== 文件列表 ========== */
+.file-list {
+    margin: 20px 0;
+}
+
+.file-item {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.file-item:hover {
+    background: #e9ecef;
+}
+
+.file-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.file-remove:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* ========== 使用说明 ========== */
+.instructions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.instructions li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.instructions li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* ========== 重新上传卡片 ========== */
+.reupload-card {
+    display: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reupload-btn {
+    background: #2c5aa0;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.reupload-btn:hover {
+    background: #1e3d6f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(44, 90, 160, 0.3);
+}
+
+/* ========== EQ部分样式 ========== */
+.eq-section {
+    margin-bottom: 25px;
+}
+
+.eq-section h4 {
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.eq-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.eq-controls .btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.eq-pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.eq-pagination .btn {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    min-width: 60px;
+}
+
+.eq-page-info {
+    font-size: 0.8rem;
+    color: #666;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* ========== EQ滑块容器 ========== */
+.eq-channels-container {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 0 15px 0;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.eq-channels {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    padding: 0 10px;
+}
+
+.eq-channel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 36px;
+    flex-shrink: 0;
+}
+
+.eq-frequency-label {
+    color: #555;
+    font-size: 9px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-align: center;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* ========== EQ滑块样式 ========== */
+.eq-slider-container {
+    position: relative;
+    height: 180px;
+    width: 26px;
+    background: #f1f3f4;
+    border: 3px solid #ddd;
+    border-radius: 13px;
+    margin: 6px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.eq-slider-container:hover {
+    border-color: #2c5aa0;
+    background: #e8f0fe;
+}
+
+.eq-slider-track {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 50%;
+    width: 2px;
+    background: #adb5bd;
+    transform: translateX(-50%);
+}
+
+.eq-slider-center {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    right: 4px;
+    height: 2px;
+    background: #495057;
+    transform: translateY(-50%);
+}
+
+.eq-slider-handle {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border: 3px solid #2c5aa0;
+    border-radius: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.eq-slider-handle:hover {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.eq-slider-handle:active {
+    cursor: grabbing;
+    transform: translateX(-50%) scale(0.95);
+}
+
+.eq-slider-handle.positive {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.eq-slider-handle.negative {
+    border-color: #2c5aa0;
+    background: #f0f8ff;
+}
+
+.eq-value-label {
+    color: #333;
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 6px;
+    text-align: center;
+    cursor: pointer;
+    line-height: 1.2;
+    min-height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.eq-value-label:hover {
+    background: rgba(44, 90, 160, 0.1);
+    border-radius: 3px;
+}
+
+.eq-value-label.positive {
+    color: #dc3545;
+}
+
+.eq-value-label.negative {
+    color: #2c5aa0;
+}
+
+.eq-value-input {
+    background: white;
+    border: 2px solid #2c5aa0;
+    border-radius: 3px;
+    padding: 3px 5px;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    width: 40px;
+    color: #2c5aa0;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(44, 90, 160, 0.3);
+}
+
+/* ========== 音频试听部分 ========== */
+.audio-test-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.audio-upload-area {
+    border: 2px dashed #17a2b8;
+    border-radius: 8px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-bottom: 15px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.audio-upload-area:hover {
+    border-color: #138496;
+    background: #e6f7ff;
+    transform: translateY(-1px);
+}
+
+.audio-upload-area.dragover {
+    border-color: #28a745;
+    background: #e8f5e8;
+    transform: scale(1.02);
+}
+
+.audio-upload-area .upload-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    pointer-events: none;
+    color: #17a2b8;
+}
+
+.audio-upload-area p {
+    font-size: 0.9rem;
+    margin: 4px 0;
+    pointer-events: none;
+}
+
+.audio-upload-area p:first-of-type {
+    font-weight: 600;
+    color: #17a2b8;
+}
+
+/* ========== 音频控制面板 ========== */
+.audio-controls-panel {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.audio-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+/* ========== 进度条 ========== */
+.progress-container {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    margin: 10px 0;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.progress-container:hover {
+    background: #dee2e6;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2c5aa0, #4a90e2);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* ========== EQ选择器 ========== */
+.eq-selection {
+    margin-bottom: 15px;
+}
+
+.eq-toggle-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.eq-toggle-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.eq-toggle-button:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+.eq-toggle-button.active {
+    background: #e3f2fd;
+    border-color: #2c5aa0;
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
+.eq-toggle-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #adb5bd;
+    transition: all 0.3s ease;
+}
+
+.eq-toggle-button.active .eq-toggle-indicator {
+    background: #2c5aa0;
+}
+
+/* ========== 音量控制 ========== */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider:hover {
+    background: #dee2e6;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2c5aa0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: #1e3d6f;
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2c5aa0;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: #1e3d6f;
+    transform: scale(1.2);
+}
+
+/* ========== 响度指示器 ========== */
+.loudness-indicator {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #1565c0;
+    font-weight: 500;
+}
+
+/* ========== 频率范围控制 ========== */
+.frequency-range-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.range-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.range-input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.range-input {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    width: 120px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.range-input:focus {
+    border-color: #2c5aa0;
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.range-input:invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 1200px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .right-panel {
+        flex: none;
+        position: static;
+        max-width: none;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header p {
+        font-size: 0.9rem;
+    }
+
+    .frequency-limits {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .curve-controls {
+        gap: 8px;
+        margin: 15px 0;
+    }
+
+    .curve-toggle {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .right-panel {
+        padding: 10px;
+    }
+
+    .eq-channel {
+        width: 32px;
+    }
+
+    .eq-slider-container {
+        width: 22px;
+        height: 160px;
+    }
+
+    .eq-slider-handle {
+        width: 18px;
+        height: 18px;
+    }
+
+    .eq-toggle-buttons {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .eq-toggle-button {
+        justify-content: center;
+        padding: 10px 15px;
+    }
+
+    .chart-container {
+        padding: 15px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.3rem;
+    }
+
+    .header p {
+        font-size: 0.8rem;
+    }
+
+    .eq-section .eq-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .eq-section .eq-controls .btn {
+        margin-right: 0;
+        margin-bottom: 8px;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .eq-pagination {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .audio-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .upload-area {
+        padding: 20px 15px;
+    }
+
+    .audio-upload-area {
+        padding: 12px 8px;
+    }
+
+    .frequency-range-controls {
+        gap: 12px;
+    }
+
+    .range-input {
+        width: 100%;
+    }
+
+    .limit-box {
+        padding: 12px;
+    }
+
+    .limit-value {
+        font-size: 1.1rem;
+    }
+}
+
+/* ========== 特殊效果和动画 ========== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card,
+.upload-area,
+.audio-upload-area {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ========== 无障碍支持 ========== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid;
+    }
+
+    .upload-area,
+    .audio-upload-area {
+        border-width: 3px;
+    }
+
+    .eq-slider-handle {
+        border-width: 4px;
+    }
+}
+
+/* 深色主题支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+    }
+
+    .card,
+    .right-panel,
+    .audio-controls-panel {
+        background: #2d2d2d;
+        border-color: #404040;
+        color: #e0e0e0;
+    }
+
+    .card-header {
+        background: #3a3a3a;
+        border-color: #404040;
+    }
+
+    .upload-area,
+    .audio-upload-area {
+        background: #2d2d2d;
+        border-color: #2c5aa0;
+    }
+
+    .upload-area:hover,
+    .audio-upload-area:hover {
+        background: #353535;
+    }
+
+    #frequencyChart {
+        background: #2d2d2d;
+    }
+}
+
+/* ========== 打印样式 ========== */
+@media print {
+    .header {
+        background: white !important;
+        color: black !important;
+        box-shadow: none;
+    }
+
+    .btn,
+    .audio-controls,
+    .eq-controls {
+        display: none;
+    }
+
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .right-panel {
+        position: static;
+        max-width: none;
+        box-shadow: none;
+    }
+}
+
+
+/* ========== 可折叠卡片样式 ========== */
+.collapsible-card {
+    overflow: hidden;
+}
+
+.collapsible-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background-color 0.3s ease;
+}
+
+.collapsible-header:hover {
+    background-color: #e9ecef;
+}
+
+.collapse-icon {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c5aa0;
+    transition: transform 0.3s ease;
+    margin-left: 10px;
+}
+
+.collapse-icon.collapsed {
+    transform: rotate(-90deg);
+}
+
+.collapsible-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .collapsible-header {
+        padding: 12px 15px;
+    }
+
+    .collapse-icon {
+        font-size: 12px;
+    }
+}
+
+.smoothing-control-group {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    border-left: 4px solid #2c5aa0;
+}
+
+.smoothing-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.smoothing-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    user-select: none;
+}
+
+.smoothing-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #2c5aa0;
+    cursor: pointer;
+}
+
+.control-text {
+    font-size: 1rem;
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
+.control-info {
+    font-size: 14px;
+    color: #6c757d;
+    cursor: help;
+    background: #e9ecef;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.control-info:hover {
+    background: #2c5aa0;
+    color: white;
+    transform: scale(1.1);
+}
+
+.control-description {
+    margin-left: 28px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.control-description small {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.algorithm-status-container {
+    margin-bottom: 25px;
+}
+
+.algorithm-status-section {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 20px;
+}
+
+.algorithm-status {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.algorithm-status.enabled {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    border-left: 4px solid #28a745;
+}
+
+.algorithm-status.disabled {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+    border-left: 4px solid #ffc107;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.status-icon {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.algorithm-status.enabled .status-icon {
+    color: #28a745;
+}
+
+.algorithm-status.disabled .status-icon {
+    color: #ffc107;
+}
+
+.status-text {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.algorithm-status.enabled .status-text {
+    color: #155724;
+}
+
+.algorithm-status.disabled .status-text {
+    color: #856404;
+}
+
+.status-description {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.algorithm-status.enabled .status-description {
+    color: #155724;
+}
+
+.algorithm-status.disabled .status-description {
+    color: #856404;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .smoothing-label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .control-description {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .status-indicator {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+*/
+
+
+.algorithm-selector-section {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.algorithm-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.algorithm-option {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.algorithm-option:hover {
+    border-color: #2c5aa0;
+    background: #f0f8ff;
+    transform: translateY(-1px);
+}
+
+.algorithm-option:has(input:checked) {
+    border-color: #2c5aa0;
+    background: #e3f2fd;
+    box-shadow: 0 2px 8px rgba(44, 90, 160, 0.15);
+}
+
+.algorithm-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+}
+
+.algorithm-label input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #2c5aa0;
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.radio-checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #2c5aa0;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.algorithm-label input:checked + .radio-checkmark {
+    background: #2c5aa0;
+    border-color: #2c5aa0;
+}
+
+.algorithm-label input:checked + .radio-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.algorithm-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.algorithm-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2c5aa0;
+    line-height: 1.2;
+}
+
+.algorithm-desc {
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.3;
+}
+
+.algorithm-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-algorithm {
+    background: #2c5aa0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-algorithm:hover:not(:disabled) {
+    background: #1e3d6f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(44, 90, 160, 0.3);
+}
+
+.btn-algorithm:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.algorithm-status {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.algorithm-status.applied {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.algorithm-status.pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .algorithm-selector {
+        gap: 12px;
+    }
+    
+    .algorithm-option {
+        padding: 12px;
+    }
+    
+    .algorithm-label {
+        gap: 10px;
+    }
+    
+    .algorithm-title {
+        font-size: 0.95rem;
+    }
+    
+    .algorithm-desc {
+        font-size: 0.85rem;
+    }
+    
+    .algorithm-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .btn-algorithm {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    .algorithm-status {
+        text-align: center;
+    }
+}
+
+/* 隐藏默认单选按钮样式 */
+.algorithm-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+*/
+
+
+/* 可折叠区域样式 */
+.collapsible-section {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.collapsible-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.collapsible-header:hover {
+    background: #e9ecef;
+}
+
+.collapsible-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.collapse-icon {
+    font-size: 14px;
+    color: #666;
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.collapse-icon.collapsed {
+    transform: rotate(-90deg);
+}
+
+.collapsible-content {
+    padding: 20px;
+    background: #fff;
+    max-height: 1000px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+}
+
+/* 特定区域的样式调整 */
+.algorithm-section.collapsible-section {
+    border-color: #007bff;
+}
+
+.algorithm-section .collapsible-header {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e3f2fd 100%);
+    border-bottom-color: #007bff;
+}
+
+.frequency-range-section.collapsible-section {
+    border-color: #e0e0e0;
+}
+
+/* 特定区域的样式调整 - 统一白色背景 */
+.frequency-range-section .collapsible-header {
+    background: #f8f9fa; /* 统一背景色，与默认样式一致 */
+    border-bottom-color: #e0e0e0; /* 统一边框颜色 */
+}
+
+/* 保持原有的功能区域内部样式不变 */
+.collapsible-content .algorithm-selector,
+.collapsible-content .frequency-range-controls {
+    margin: 0;
+}
+
+.collapsible-content .algorithm-actions,
+.collapsible-content .range-input-group {
+    margin-top: 15px;
+}
+
+.collapsible-content p {
+    margin-bottom: 0;
+}
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音箱频响优化工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>音箱频响优化工具</h1>
+            <p>音箱频响分析、实时EQ调节与预测 | 支持最多10个文件 | 响度补偿试听</p>
+        </div>
+
+        <div class="main-layout">
+            <div class="left-panel">
+                <!-- 使用说明卡片 -->
+                <div class="card" id="instructionsCard">
+                    <div class="card-header">使用说明</div>
+                    <div class="card-body instructions">
+                        <ul>
+                            <li>上传1-10个粉红噪声录音文件（支持WAV、MP3、FLAC等格式）</li>
+                            <li>系统自动平均多个文件的频谱并分析音箱频响特性</li>
+                            <li>拖拽右侧滑块实时调节EQ值，图表同步更新预测效果</li>
+                            <li>双击数值标签可直接输入数字进行精确调节</li>
+                            <li>上传试听音频文件可实时体验EQ效果，支持无缝切换</li>
+                            <li>基于人耳敏感度的智能响度补偿确保不同EQ设置下音量一致</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 音频文件上传卡片 -->
+                <div class="card" id="uploadCard">
+                    <div class="card-header">上传音频文件</div>
+                    <div class="card-body">
+                        <div class="upload-area" id="fileDropArea">
+                            <div class="upload-icon">🎵</div>
+                            <p><strong>点击选择文件或拖拽文件到这里</strong></p>
+                            <p>支持 WAV、MP3、FLAC 等音频格式 | 最多10个文件</p>
+                            <input type="file" id="audioFiles" class="file-input" multiple accept="audio/*">
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button onclick="analyzeAudio()" class="btn" id="analyzeBtn">开始分析</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 重新上传卡片 -->
+                <div class="reupload-card" id="reuploadCard">
+                    <p style="margin-bottom: 15px; color: #666;">想要分析其他音频文件？</p>
+                    <button onclick="resetToUpload()" class="reupload-btn">重新上传音频文件</button>
+                </div>
+
+                <!-- 音箱问题诊断卡片 -->
+                <div id="speakerIssues" class="card collapsible-card" style="display: none;">
+                    <div class="card-header collapsible-header" onclick="toggleSpeakerIssues()">
+                        <span>音箱问题诊断</span>
+                        <span class="collapse-icon" id="speakerIssuesIcon">▼</span>
+                    </div>
+                    <div class="card-body collapsible-content" id="issuesContent"></div>
+                </div>
+
+                <!-- 加载状态 -->
+                <div id="loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    <h3>正在分析中...</h3>
+                    <p>正在处理音频数据并生成频响分析，请稍候</p>
+                </div>
+
+                <!-- 错误提示 -->
+                <div id="error" class="error"></div>
+
+                <!-- 分析结果 -->
+                <div id="results" class="results">
+                    <div class="card">
+                        <div class="card-header">频响分析图表</div>
+                        <div class="card-body">
+                            <!-- 曲线控制 -->
+                            <div class="curve-controls" id="curveControls">
+                                <div class="curve-toggle active" data-curve="original">
+                                    <div class="curve-color" style="background-color: #e57373;"></div>
+                                    <span>原始测量</span>
+                                </div>
+                                <div class="curve-toggle active" data-curve="eq15">
+                                    <div class="curve-color" style="background-color: #81c784;"></div>
+                                    <span>15段EQ后预测</span>
+                                </div>
+                                <div class="curve-toggle active" data-curve="eq31">
+                                    <div class="curve-color" style="background-color: #64b5f6;"></div>
+                                    <span>31段EQ后预测</span>
+                                </div>
+                            </div>
+
+                            <!-- 图表容器 -->
+                            <div class="chart-container">
+                                <svg id="frequencyChart" width="100%" height="400" viewBox="0 0 800 400"></svg>
+                            </div>
+
+                            <!-- 频率范围显示 -->
+                            <div class="frequency-limits" id="frequencyLimits">
+                                <div class="limit-box">
+                                    <div class="limit-title">15段EQ调节后的频率范围（-6dB点）</div>
+                                    <div class="limit-value" id="eq15LowLimit">-- Hz</div>
+                                    <div class="limit-label">低频极限</div>
+                                    <div class="limit-value" id="eq15HighLimit">-- Hz</div>
+                                    <div class="limit-label">高频极限</div>
+                                </div>
+                                <div class="limit-box">
+                                    <div class="limit-title">31段EQ调节后的频率范围（-6dB点）</div>
+                                    <div class="limit-value" id="eq31LowLimit">-- Hz</div>
+                                    <div class="limit-label">低频极限</div>
+                                    <div class="limit-value" id="eq31HighLimit">-- Hz</div>
+                                    <div class="limit-label">高频极限</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="right-panel">
+                <div id="eqConsole" style="display: none;">
+                    <!-- 数据导出部分 -->
+                    <div class="eq-section"
+                        style="border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 25px;">
+                        <h4>数据导出</h4>
+                        <div class="eq-controls">
+                            <button class="btn" onclick="exportEQData('15')"
+                                style="background: #28a745;">导出15段EQ</button>
+                            <button class="btn" onclick="exportEQData('31')"
+                                style="background: #17a2b8;">导出31段EQ</button>
+                            <button class="btn btn-secondary" onclick="exportBothEQData()">导出全部</button>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 8px; margin-bottom: 0;">
+                            导出当前EQ调节值为CSV格式，可直接导入其他音频设备
+                        </p>
+                    </div>
+
+                    <!-- 目标频率范围设置 -->
+                    <div class="eq-section"
+                        style="border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 25px;">
+                        <h4>目标频率范围</h4>
+                        <div class="frequency-range-controls">
+                            <div class="range-input-group">
+                                <label for="targetLowFreq">目标低频下潜 (Hz)</label>
+                                <input type="number" id="targetLowFreq" class="range-input" min="20" max="1000" step="1"
+                                    value="20" onchange="updateFrequencyRange()">
+                            </div>
+                            <div class="range-input-group">
+                                <label for="targetHighFreq">目标高频延伸 (Hz)</label>
+                                <input type="number" id="targetHighFreq" class="range-input" min="1000" max="20000"
+                                    step="100" value="20000" onchange="updateFrequencyRange()">
+                            </div>
+                            <button class="btn" onclick="reoptimizeEQ()"
+                                style="background: #2c5aa0; color: white; margin-top: 10px;">
+                                重新优化EQ
+                            </button>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 8px; margin-bottom: 0;">
+                            设定EQ优化的频率范围，超出范围的频段将不做处理
+                        </p>
+                    </div>
+
+                    <!-- 15段EQ调节 -->
+                    <div class="eq-section">
+                        <h4>15段EQ调节</h4>
+                        <div class="eq-controls">
+                            <button class="btn btn-secondary" onclick="resetEQ('15')">重置</button>
+                            <button class="btn btn-secondary" onclick="zeroAllEQ('15')">归零</button>
+                            <div class="eq-pagination">
+                                <button class="btn btn-secondary" id="eq15PrevBtn"
+                                    onclick="changePage('15', -1)">上一页</button>
+                                <div class="eq-page-info" id="eq15PageInfo">第1页/共2页</div>
+                                <button class="btn btn-secondary" id="eq15NextBtn"
+                                    onclick="changePage('15', 1)">下一页</button>
+                            </div>
+                        </div>
+                        <div class="eq-channels-container">
+                            <div class="eq-channels" id="eq15Channels"></div>
+                        </div>
+                    </div>
+
+                    <!-- 31段EQ调节 -->
+                    <div class="eq-section">
+                        <h4>31段EQ调节</h4>
+                        <div class="eq-controls">
+                            <button class="btn btn-secondary" onclick="resetEQ('31')">重置</button>
+                            <button class="btn btn-secondary" onclick="zeroAllEQ('31')">归零</button>
+                            <div class="eq-pagination">
+                                <button class="btn btn-secondary" id="eq31PrevBtn"
+                                    onclick="changePage('31', -1)">上一页</button>
+                                <div class="eq-page-info" id="eq31PageInfo">第1页/共4页</div>
+                                <button class="btn btn-secondary" id="eq31NextBtn"
+                                    onclick="changePage('31', 1)">下一页</button>
+                            </div>
+                        </div>
+                        <div class="eq-channels-container">
+                            <div class="eq-channels" id="eq31Channels"></div>
+                        </div>
+                    </div>
+
+                    <!-- EQ效果试听 -->
+                    <div class="eq-section audio-test-section">
+                        <h4>EQ效果试听</h4>
+
+                        <!-- EQ类型选择 -->
+                        <div class="eq-selection">
+                            <div class="eq-toggle-buttons">
+                                <div class="eq-toggle-button active" data-eq-type="none">
+                                    <div class="eq-toggle-indicator"></div>
+                                    <span>无EQ效果</span>
+                                </div>
+                                <div class="eq-toggle-button" data-eq-type="eq15">
+                                    <div class="eq-toggle-indicator"></div>
+                                    <span>应用15段EQ</span>
+                                </div>
+                                <div class="eq-toggle-button" data-eq-type="eq31">
+                                    <div class="eq-toggle-indicator"></div>
+                                    <span>应用31段EQ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 音频文件上传区域 -->
+                        <div id="audioUploadArea" class="audio-upload-area">
+                            <div class="upload-icon">🎧</div>
+                            <p><strong>选择试听音频文件</strong></p>
+                            <p>支持 WAV、MP3、FLAC 等格式</p>
+                            <input type="file" id="testAudioFile" class="file-input" accept="audio/*">
+                        </div>
+
+                        <!-- 音频播放控制面板 -->
+                        <div id="audioControlsPanel" class="audio-controls-panel">
+                            <div class="audio-info" id="audioInfo">未选择文件</div>
+
+                            <!-- 播放控制按钮 -->
+                            <div class="audio-controls">
+                                <button id="playPauseBtn" class="btn btn-small" onclick="togglePlayPause()">播放</button>
+                                <button id="stopBtn" class="btn btn-secondary btn-small"
+                                    onclick="stopAudio()">停止</button>
+                                <button id="rewindBtn" class="btn btn-secondary btn-small"
+                                    onclick="rewindAudio()">重置</button>
+                            </div>
+
+                            <!-- 进度条 -->
+                            <div class="progress-container" onclick="seekAudio(event)">
+                                <div class="progress-bar" id="progressBar"></div>
+                            </div>
+
+                            <!-- 时间显示 -->
+                            <div class="time-display">
+                                <span id="currentTime">0:00</span>
+                                <span id="totalTime">0:00</span>
+                            </div>
+
+                            <!-- 音量控制 -->
+                            <div class="volume-control">
+                                <span>🔈</span>
+                                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100"
+                                    value="25">
+                                <span id="volumeValue">25%</span>
+                            </div>
+
+                            <!-- 响度补偿指示器 -->
+                            <div class="loudness-indicator" id="loudnessIndicator">
+                                智能响度补偿: 0.0dB (基于人耳敏感度确保音量一致)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EQ控制台占位符 -->
+                <div id="eqPlaceholder" style="text-align: center; color: #999; padding: 40px 20px;">
+                    <p>分析完成后，这里将显示EQ调节控制台</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+<script>
+// 自动打包生成 - 2025-09-06 17:19:28
+// 文件顺序: web.js
+// 模块说明: core.js(基础算法) -> chart.js(图表绘制) -> audio.js(音频处理)
+
+// ===== web.js 开始 =====
+// web.js
+/**
+ * 粉红噪声EQ分析工具 - 前端JavaScript实现
+ * 功能：音频文件上传、频响分析、EQ调节、实时预览、音频试听
+ */
+
+// 全局变量
+let selectedFiles = [];
+let analysisResults = null;
+let currentChart = null;
+let currentAudio = null;
+let audioContext = null;
+let currentEQType = 'none';
+let isPlaying = false;
+let currentTime = 0;
+let totalDuration = 0;
+
+// EQ设置
+let eq15Settings = new Array(15).fill(0);
+let eq31Settings = new Array(31).fill(0);
+let eq15PageIndex = 0;
+let eq31PageIndex = 0;
+const eq15PerPage = 8;
+const eq31PerPage = 8;
+
+// 频率范围设置
+let targetLowFreq = 20;
+let targetHighFreq = 20000;
+
+// 曲线显示控制
+let curveVisibility = {
+    original: true,
+    eq15: true,
+    eq31: true
+};
+
+let audioSource = null;
+let gainNode = null;
+let eq15FilterNodes = [];
+let eq31FilterNodes = [];
+let analyzerNode = null;
+
+
+let preGainNode = null;
+
+let speakerIssuesCollapsed = false;
+
+// 在现有全局变量后添加
+let algorithmSectionCollapsed = false;
+let frequencyRangeSectionCollapsed = false;
+
+// 音频处理常量
+const PRE_GAIN_DB = -12; // 统一预衰减12dB，为EQ增益留出净空
+const PRE_GAIN_LINEAR = Math.pow(10, PRE_GAIN_DB / 20); // 转换为线性增益
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function () {
+    initializeUploadArea();
+    initializeEQControls();
+    initializeImprovedAudioControls();
+    initializeCurveControls();
+    initializeFrequencyControls();
+
+    console.log('音箱校准工具初始化完成');
+});
+
+/**
+ * 初始化文件上传区域
+ */
+function initializeUploadArea() {
+    const fileInput = document.getElementById('audioFiles');
+    const dropArea = document.getElementById('fileDropArea');
+    const fileList = document.getElementById('fileList');
+
+    // 文件选择
+    fileInput.addEventListener('change', handleFileSelection);
+
+    // 拖拽上传
+    dropArea.addEventListener('dragover', handleDragOver);
+    dropArea.addEventListener('dragleave', handleDragLeave);
+    dropArea.addEventListener('drop', handleFileDrop);
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    function handleFileSelection(e) {
+        const files = Array.from(e.target.files);
+        addFiles(files);
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+    }
+
+    function handleFileDrop(e) {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        addFiles(files);
+    }
+
+    function addFiles(files) {
+        // 过滤音频文件
+        const audioFiles = files.filter(file => file.type.startsWith('audio/'));
+
+        if (audioFiles.length === 0) {
+            showError('请选择有效的音频文件');
+            return;
+        }
+
+        // 限制最多10个文件
+        const remainingSlots = 10 - selectedFiles.length;
+        const filesToAdd = audioFiles.slice(0, remainingSlots);
+
+        selectedFiles.push(...filesToAdd);
+        updateFileList();
+
+        if (filesToAdd.length < audioFiles.length) {
+            showError(`最多支持10个文件，已添加${filesToAdd.length}个文件`);
+        }
+
+        // 启用分析按钮
+        document.getElementById('analyzeBtn').disabled = false;
+    }
+
+    function updateFileList() {
+        fileList.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span>${file.name} (${formatFileSize(file.size)})</span>
+                <button class="file-remove" onclick="removeFile(${index})">×</button>
+            `;
+            fileList.appendChild(fileItem);
+        });
+
+        if (selectedFiles.length === 0) {
+            document.getElementById('analyzeBtn').disabled = true;
+        }
+    }
+}
+
+/**
+ * 移除文件
+ */
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    document.querySelector('#fileList').innerHTML = '';
+
+    // 重新生成文件列表
+    const fileList = document.getElementById('fileList');
+    selectedFiles.forEach((file, i) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+            <span>${file.name} (${formatFileSize(file.size)})</span>
+            <button class="file-remove" onclick="removeFile(${i})">×</button>
+        `;
+        fileList.appendChild(fileItem);
+    });
+
+    if (selectedFiles.length === 0) {
+        document.getElementById('analyzeBtn').disabled = true;
+    }
+}
+
+/**
+ * 格式化文件大小
+ */
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
+ * 开始分析音频
+ */
+async function analyzeAudio() {
+    if (selectedFiles.length === 0) {
+        showError('请先选择音频文件');
+        return;
+    }
+
+    showLoading();
+    hideError();
+
+    try {
+        const formData = new FormData();
+        selectedFiles.forEach(file => {
+            formData.append('audio_files', file);
+        });
+
+        // 默认启用平滑算法（首次分析）
+        formData.append('enable_smoothing', 'true');
+
+        const response = await fetch('/api/analyze', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            analysisResults = result;
+            displayResults(result);
+            hideLoading();
+            showReuploadCard();
+
+            console.log(`分析完成 - 平滑算法状态: ${result.smoothing_enabled ? '已启用' : '已禁用'}`);
+        } else {
+            throw new Error(result.error || '分析失败');
+        }
+    } catch (error) {
+        console.error('分析错误:', error);
+        showError('分析失败: ' + error.message);
+        hideLoading();
+    }
+}
+
+/**
+ * 显示分析结果
+ */
+function displayResults(results) {
+    // 隐藏上传卡片，显示结果
+    document.getElementById('uploadCard').style.display = 'none';
+    document.getElementById('instructionsCard').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('eqConsole').style.display = 'block';
+    document.getElementById('eqPlaceholder').style.display = 'none';
+
+    // 设置EQ建议
+    if (results.eq_suggestions) {
+        eq15Settings = results.eq_suggestions.eq_15.map(item =>
+            parseFloat(item.adjustment.replace(/[^-\d.]/g, ''))
+        );
+        eq31Settings = results.eq_suggestions.eq_31.map(item =>
+            parseFloat(item.adjustment.replace(/[^-\d.]/g, ''))
+        );
+    }
+
+    // 绘制频响曲线
+    drawFrequencyChart(results.chart_data);
+
+    // 更新EQ控制器
+    updateEQDisplays();
+
+    // 显示频率极限
+    updateFrequencyLimits(results.frequency_limits);
+
+    // 显示音箱问题诊断
+    displaySpeakerIssues(results.speaker_issues);
+
+    // 添加算法选择控件到EQ区域（现在是可折叠的）
+    addSmoothingControlToEQAreaWithCollapse();
+
+    // ✅ 新增：使目标频率范围区域变为可折叠
+    setTimeout(() => {
+        makeFrequencyRangeCollapsible();
+        // 初始化所有折叠区域的状态
+        initializeCollapsibleSections();
+    }, 100); // 延迟执行确保DOM已更新
+}
+
+
+// 平滑算法控件到EQ控制区域
+function addSmoothingControlToEQArea() {
+    const eqConsole = document.getElementById('eqConsole');
+
+    // 检查是否已经添加过控件
+    if (document.getElementById('algorithmSelector')) {
+        return;
+    }
+
+    // 创建算法选择器区域 - 添加底部分割线样式
+    const algorithmSelectorSection = document.createElement('div');
+    algorithmSelectorSection.className = 'eq-section algorithm-selector-section';
+    // ✅ 关键修改：添加与其他区域一致的分割线样式
+    algorithmSelectorSection.style.cssText = 'border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 25px;';
+
+    algorithmSelectorSection.innerHTML = `
+        <h4>EQ算法选择</h4>
+        <div id="algorithmSelector" class="algorithm-selector">
+            <div class="algorithm-option">
+                <label class="algorithm-label">
+                    <input type="radio" name="eqAlgorithm" value="smoothed" id="algorithmSmoothed" checked>
+                    <span class="radio-checkmark"></span>
+                    <div class="algorithm-info">
+                        <span class="algorithm-title">平滑优化算法</span>
+                        <span class="algorithm-desc">减少400Hz以上频段共鸣，听感更自然（推荐）</span>
+                    </div>
+                </label>
+            </div>
+            <div class="algorithm-option">
+                <label class="algorithm-label">
+                    <input type="radio" name="eqAlgorithm" value="precise" id="algorithmPrecise">
+                    <span class="radio-checkmark"></span>
+                    <div class="algorithm-info">
+                        <span class="algorithm-title">精确校正算法</span>
+                        <span class="algorithm-desc">严格按测量数据校正，适合专业监听</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="algorithm-actions">
+            <button class="btn btn-algorithm" onclick="applySelectedAlgorithm()">应用选择的算法</button>
+            <div class="algorithm-status" id="currentAlgorithmStatus">
+                当前：平滑优化算法
+            </div>
+        </div>
+    `;
+
+    // 插入到第一个eq-section之前（在数据导出之后）
+    const firstEQSection = eqConsole.querySelector('.eq-section:nth-child(2)'); // 跳过数据导出部分
+    eqConsole.insertBefore(algorithmSelectorSection, firstEQSection);
+
+    // 添加事件监听器
+    initializeAlgorithmSelector();
+}
+
+// 初始化算法选择器事件
+function initializeAlgorithmSelector() {
+    const radioButtons = document.querySelectorAll('input[name="eqAlgorithm"]');
+
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function () {
+            const selectedAlgorithm = this.value;
+            const statusText = selectedAlgorithm === 'smoothed' ? '平滑优化算法' : '精确校正算法';
+
+            // 更新状态显示（但不立即应用）
+            const statusElement = document.getElementById('currentAlgorithmStatus');
+            statusElement.innerHTML = `选择：${statusText} <span style="color: #ffc107;">（点击"应用"生效）</span>`;
+            statusElement.className = 'algorithm-status pending';
+        });
+    });
+}
+
+
+
+// 应用选择的算法
+async function applySelectedAlgorithm() {
+    if (!analysisResults) {
+        showError('请先完成音频分析');
+        return;
+    }
+
+    const selectedRadio = document.querySelector('input[name="eqAlgorithm"]:checked');
+    const useSmoothing = selectedRadio.value === 'smoothed';
+
+    console.log(`应用算法: ${useSmoothing ? '平滑优化' : '精确校正'}`);
+
+    // 显示加载状态
+    const applyButton = document.querySelector('.btn-algorithm');
+    const originalText = applyButton.textContent;
+    applyButton.textContent = '应用中...';
+    applyButton.disabled = true;
+
+    try {
+        // 准备重新分析的数据
+        const requestData = {
+            frequencies: analysisResults.chart_data.frequencies,
+            measured_spectrum_diff: analysisResults.chart_data.measured_spectrum_diff,
+            target_low_freq: targetLowFreq,
+            target_high_freq: targetHighFreq,
+            enable_smoothing: useSmoothing
+        };
+
+        // 调用后端重新优化API
+        const response = await fetch('/api/reoptimize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // 更新EQ设置
+            eq15Settings = result.eq_15_settings;
+            eq31Settings = result.eq_31_settings;
+
+            // 更新图表数据
+            const updatedChartData = {
+                ...analysisResults.chart_data,
+                eq_15_applied_diff: result.eq_15_applied_diff,
+                eq_31_applied_diff: result.eq_31_applied_diff
+            };
+
+            // 重新绘制图表
+            drawFrequencyChart(updatedChartData);
+
+            // 更新EQ显示
+            updateEQDisplays();
+
+            // 更新频率极限
+            updateFrequencyLimits(result.frequency_limits);
+
+            // 更新算法状态显示
+            const algorithmName = useSmoothing ? '平滑优化算法' : '精确校正算法';
+            const statusElement = document.getElementById('currentAlgorithmStatus');
+            statusElement.innerHTML = `当前：${algorithmName}`;
+            statusElement.className = 'algorithm-status applied';
+
+            // 如果当前正在使用EQ进行音频试听，立即更新音频效果
+            if (currentEQType === 'eq15' || currentEQType === 'eq31') {
+                updateAudioEQ();
+                showEQUpdateFeedback(currentEQType);
+            }
+
+            console.log(`算法应用成功: ${algorithmName}`);
+            showSuccessMessage(`已应用${algorithmName}，EQ设置已更新`);
+
+        } else {
+            throw new Error(result.error || '算法应用失败');
+        }
+
+    } catch (error) {
+        console.error('应用算法失败:', error);
+        showError('算法应用失败: ' + error.message);
+    } finally {
+        // 恢复按钮状态
+        applyButton.textContent = originalText;
+        applyButton.disabled = false;
+    }
+}
+
+
+
+
+// // 新增函数 - 显示平滑算法状态
+// function displaySmoothingStatus(smoothingEnabled) {
+//     // 查找或创建状态显示区域
+//     let statusContainer = document.getElementById('algorithmStatus');
+
+//     if (!statusContainer) {
+//         // 创建状态容器
+//         statusContainer = document.createElement('div');
+//         statusContainer.id = 'algorithmStatus';
+//         statusContainer.className = 'algorithm-status-container';
+
+//         // 插入到数据导出部分之前
+//         const eqConsole = document.getElementById('eqConsole');
+//         const firstSection = eqConsole.querySelector('.eq-section');
+//         eqConsole.insertBefore(statusContainer, firstSection);
+//     }
+
+//     // 更新状态显示
+//     const statusClass = smoothingEnabled ? 'enabled' : 'disabled';
+//     const statusIcon = smoothingEnabled ? '✓' : '✗';
+//     const statusText = smoothingEnabled ? '已启用' : '已禁用';
+//     const statusDescription = smoothingEnabled ?
+//         '已优化中高频区域，减少共鸣问题' :
+//         '精确校正模式，未应用平滑处理';
+
+//     statusContainer.innerHTML = `
+//         <div class="eq-section algorithm-status-section">
+//             <h4>算法状态</h4>
+//             <div class="algorithm-status ${statusClass}">
+//                 <div class="status-indicator">
+//                     <span class="status-icon">${statusIcon}</span>
+//                     <span class="status-text">中高频平滑优化: ${statusText}</span>
+//                 </div>
+//                 <div class="status-description">
+//                     <small>${statusDescription}</small>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+// }
+
+// // 添加平滑算法控件到上传卡片中
+// function addSmoothingControlToUploadCard() {
+//     const uploadCard = document.getElementById('uploadCard');
+//     const cardBody = uploadCard.querySelector('.card-body');
+
+//     // 检查是否已经添加过控件
+//     if (document.getElementById('enableSmoothing')) {
+//         return;
+//     }
+
+//     // 创建平滑算法控制组
+//     const smoothingControlGroup = document.createElement('div');
+//     smoothingControlGroup.className = 'smoothing-control-group';
+//     smoothingControlGroup.innerHTML = `
+//         <div class="smoothing-control">
+//             <label class="smoothing-label">
+//                 <input type="checkbox" id="enableSmoothing" checked>
+//                 <span class="checkmark"></span>
+//                 <span class="control-text">启用中高频平滑优化</span>
+//                 <span class="control-info" title="推荐启用：减少400Hz以上频段的共鸣问题，获得更自然的听感。专业用户可关闭以获得精确校正。">ℹ️</span>
+//             </label>
+//             <div class="control-description">
+//                 <small>400Hz以上频段采用平滑处理，避免过度校正造成的共鸣问题</small>
+//             </div>
+//         </div>
+//     `;
+
+//     // 插入到分析按钮前面
+//     const analyzeButtonContainer = cardBody.querySelector('div[style*="text-align: center"]');
+//     cardBody.insertBefore(smoothingControlGroup, analyzeButtonContainer);
+// }
+
+/**
+ * 绘制频响曲线图表
+ */
+function drawFrequencyChart(chartData) {
+    const svg = document.getElementById('frequencyChart');
+    const width = 800;
+    const height = 400;
+    const margin = { top: 20, right: 40, bottom: 60, left: 60 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+
+    // 清空现有内容
+    svg.innerHTML = '';
+
+    // 频率和幅度范围
+    // 频率和幅度范围 - 自适应纵坐标缩放
+    const freqs = chartData.frequencies;
+    const minFreq = Math.min(...freqs);
+    const maxFreq = Math.max(...freqs);
+
+    // 收集所有需要显示的曲线数据
+    const allData = [];
+    if (curveVisibility.original && chartData.measured_spectrum_diff) {
+        allData.push(...chartData.measured_spectrum_diff.filter(val => !isNaN(val) && isFinite(val)));
+    }
+    if (curveVisibility.eq15 && chartData.eq_15_applied_diff) {
+        allData.push(...chartData.eq_15_applied_diff.filter(val => !isNaN(val) && isFinite(val)));
+    }
+    if (curveVisibility.eq31 && chartData.eq_31_applied_diff) {
+        allData.push(...chartData.eq_31_applied_diff.filter(val => !isNaN(val) && isFinite(val)));
+    }
+
+    // 自适应计算Y轴范围 - 改进算法
+    let minDb, maxDb;
+    if (allData.length > 0) {
+        // 过滤异常值（超过±100dB的值通常是错误数据）
+        const validData = allData.filter(val => val >= -100 && val <= 100);
+
+        if (validData.length > 0) {
+            const dataMin = Math.min(...validData);
+            const dataMax = Math.max(...validData);
+
+            // 计算合理的边距，至少3dB
+            const range = dataMax - dataMin;
+            const padding = Math.max(3, range * 0.15); // 15%边距，最少3dB
+
+            // 扩展范围并对齐到3dB网格
+            const expandedMin = dataMin - padding;
+            const expandedMax = dataMax + padding;
+
+            minDb = Math.floor(expandedMin / 3) * 3;
+            maxDb = Math.ceil(expandedMax / 3) * 3;
+
+            // 确保最小显示范围为18dB
+            if (maxDb - minDb < 18) {
+                const center = (maxDb + minDb) / 2;
+                minDb = center - 9;
+                maxDb = center + 9;
+                // 重新对齐到3dB网格
+                minDb = Math.floor(minDb / 3) * 3;
+                maxDb = Math.ceil(maxDb / 3) * 3;
+            }
+
+            // console.log(`数据范围: ${dataMin.toFixed(1)}dB 到 ${dataMax.toFixed(1)}dB`);
+            // console.log(`显示范围: ${minDb}dB 到 ${maxDb}dB`);
+        } else {
+            // 没有有效数据时使用默认范围
+            minDb = -15;
+            maxDb = 15;
+        }
+    } else {
+        // 没有数据时使用默认范围
+        minDb = -15;
+        maxDb = 15;
+    }
+
+    // 创建比例尺
+    const xScale = (freq) => margin.left + chartWidth * Math.log10(freq / minFreq) / Math.log10(maxFreq / minFreq);
+    const yScale = (db) => margin.top + chartHeight * (maxDb - db) / (maxDb - minDb);
+
+    // 绘制网格
+    drawGrid();
+
+    // 绘制坐标轴
+    drawAxes();
+
+    // 绘制曲线
+    drawCurves();
+
+    function drawGrid() {
+        const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        gridGroup.setAttribute('class', 'grid');
+
+        // 频率网格线
+        const freqLines = [20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 1500, 2000, 3000, 5000, 7000, 10000, 15000, 20000];
+        freqLines.forEach(freq => {
+            if (freq >= minFreq && freq <= maxFreq) {
+                const x = xScale(freq);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', margin.top);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', height - margin.bottom);
+                line.setAttribute('stroke', '#e0e0e0');
+                line.setAttribute('stroke-width', '1');
+                gridGroup.appendChild(line);
+            }
+        });
+
+        // 分贝网格线 - 自适应间隔
+        const dbRange = maxDb - minDb;
+        let dbStep = 1.5; // 默认1.5dB间隔
+
+        // 根据范围调整网格密度
+        if (dbRange > 40) {
+            dbStep = 6; // 大范围时使用6dB间隔
+        } else if (dbRange > 15) {
+            dbStep = 3;  // 中等范围时使用3dB间隔
+        }
+
+        // 计算起始点，确保包含0dB线
+        const startDb = Math.floor(minDb / dbStep) * dbStep;
+        const endDb = Math.ceil(maxDb / dbStep) * dbStep;
+
+        for (let db = startDb; db <= endDb; db += dbStep) {
+            if (db >= minDb && db <= maxDb) {
+                const y = yScale(db);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', margin.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width - margin.right);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', db === 0 ? '#999' : '#e0e0e0');
+                line.setAttribute('stroke-width', db === 0 ? '2' : '1');
+                gridGroup.appendChild(line);
+            }
+        }
+
+        svg.appendChild(gridGroup);
+    }
+
+    function drawAxes() {
+        // X轴
+        const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        xAxis.setAttribute('x1', margin.left);
+        xAxis.setAttribute('y1', height - margin.bottom);
+        xAxis.setAttribute('x2', width - margin.right);
+        xAxis.setAttribute('y2', height - margin.bottom);
+        xAxis.setAttribute('stroke', '#333');
+        xAxis.setAttribute('stroke-width', '2');
+        svg.appendChild(xAxis);
+
+        // Y轴
+        const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        yAxis.setAttribute('x1', margin.left);
+        yAxis.setAttribute('y1', margin.top);
+        yAxis.setAttribute('x2', margin.left);
+        yAxis.setAttribute('y2', height - margin.bottom);
+        yAxis.setAttribute('stroke', '#333');
+        yAxis.setAttribute('stroke-width', '2');
+        svg.appendChild(yAxis);
+
+        // 频率标签
+        const freqLabels = [20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 1500, 2000, 3000, 5000, 7000, 10000, 15000, 20000];
+        freqLabels.forEach(freq => {
+            if (freq >= Math.min(minFreq, 20) && freq <= maxFreq) {
+                const x = xScale(freq);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', height - margin.bottom + 20);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('fill', '#666');
+                text.textContent = freq >= 1000 ? (freq / 1000) + 'k' : freq;
+                svg.appendChild(text);
+            }
+        });
+
+        // 分贝标签 - 自适应标签间隔
+        const dbRange = maxDb - minDb;
+        let labelStep = 3; // 默认3dB间隔
+
+        // 根据范围调整标签密度  
+        if (dbRange > 40) {
+            labelStep = 6; // 大范围时使用6dB间隔
+        } else if (dbRange > 15) {
+            labelStep = 3;  // 中等范围时使用3dB间隔
+        } else if (dbRange < 15) {
+            labelStep = 1.5;  // 小范围时使用1.5dB间隔
+        }
+
+        const startLabelDb = Math.floor(minDb / labelStep) * labelStep;
+        const endLabelDb = Math.ceil(maxDb / labelStep) * labelStep;
+
+        for (let db = startLabelDb; db <= endLabelDb; db += labelStep) {
+            if (db >= minDb && db <= maxDb) {
+                const y = yScale(db);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', margin.left - 10);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('text-anchor', 'end');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('fill', '#666');
+                text.textContent = db + 'dB';
+                svg.appendChild(text);
+            }
+        }
+
+        // 轴标签
+        const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        xLabel.setAttribute('x', width / 2);
+        xLabel.setAttribute('y', height - 10);
+        xLabel.setAttribute('text-anchor', 'middle');
+        xLabel.setAttribute('font-size', '14');
+        xLabel.setAttribute('fill', '#333');
+        xLabel.textContent = '频率 (Hz)';
+        svg.appendChild(xLabel);
+
+        const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        yLabel.setAttribute('x', 20);
+        yLabel.setAttribute('y', height / 2 - 10);
+        yLabel.setAttribute('text-anchor', 'middle');
+        yLabel.setAttribute('font-size', '14');
+        yLabel.setAttribute('fill', '#333');
+        yLabel.setAttribute('transform', `rotate(-90, 20, ${height / 2})`);
+        yLabel.textContent = '频响偏差 (dB)';
+        svg.appendChild(yLabel);
+
+        // 原点标注
+        const originX = margin.left;
+        const originY = height - margin.bottom;
+
+        // // 频率原点标注 (20Hz)
+        // const freqOriginText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        // freqOriginText.setAttribute('x', originX - 5);
+        // freqOriginText.setAttribute('y', originY + 35);
+        // freqOriginText.setAttribute('text-anchor', 'end');
+        // freqOriginText.setAttribute('font-size', '11');
+        // freqOriginText.setAttribute('fill', '#333');
+        // freqOriginText.setAttribute('font-weight', 'bold');
+        // freqOriginText.textContent = '20Hz';
+        // svg.appendChild(freqOriginText);
+
+        // // 分贝原点标注 (0dB参考线位置)
+        // const zeroDbY = yScale(0);
+        // const dbOriginText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        // dbOriginText.setAttribute('x', originX - 15);
+        // dbOriginText.setAttribute('y', zeroDbY + 4);
+        // dbOriginText.setAttribute('text-anchor', 'end');
+        // dbOriginText.setAttribute('font-size', '11');
+        // dbOriginText.setAttribute('fill', '#333');
+        // dbOriginText.setAttribute('font-weight', 'bold');
+        // dbOriginText.textContent = '0dB';
+        // svg.appendChild(dbOriginText);
+    }
+
+    function drawCurves() {
+        const curves = [
+            {
+                id: 'original',
+                data: chartData.measured_spectrum_diff,
+                color: '#e57373',
+                label: '原始测量',
+                visible: curveVisibility.original
+            },
+            {
+                id: 'eq15',
+                data: chartData.eq_15_applied_diff,
+                color: '#81c784',
+                label: '15段EQ后预测',
+                visible: curveVisibility.eq15
+            },
+            {
+                id: 'eq31',
+                data: chartData.eq_31_applied_diff,
+                color: '#64b5f6',
+                label: '31段EQ后预测',
+                visible: curveVisibility.eq31
+            }
+        ];
+
+        curves.forEach(curve => {
+            if (!curve.visible || !curve.data) return;
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            let pathData = '';
+            let validPointsCount = 0;
+
+            // 验证数据并构建路径
+            curve.data.forEach((db, i) => {
+                // 添加数据验证
+                if (!isFinite(db) || !isFinite(freqs[i]) || freqs[i] <= 0) {
+                    console.warn(`跳过无效数据点: freq=${freqs[i]}, db=${db}`);
+                    return;
+                }
+
+                const x = xScale(freqs[i]);
+                const y = yScale(db);
+
+                // 验证计算结果
+                if (!isFinite(x) || !isFinite(y)) {
+                    console.warn(`跳过无效坐标: x=${x}, y=${y}`);
+                    return;
+                }
+
+                if (validPointsCount === 0) {
+                    pathData += `M ${x} ${y}`;
+                } else {
+                    pathData += ` L ${x} ${y}`;
+                }
+                validPointsCount++;
+            });
+
+            // 只有在有有效数据点时才绘制路径
+            if (validPointsCount > 0 && pathData) {
+                path.setAttribute('d', pathData);
+                path.setAttribute('stroke', curve.color);
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('data-curve', curve.id);
+                svg.appendChild(path);
+            } else {
+                console.warn(`曲线 ${curve.id} 没有有效数据点`);
+            }
+        });
+    }
+
+    // 保存图表引用
+    currentChart = { chartData, xScale, yScale };
+}
+
+/**
+ * 初始化EQ控制器
+ */
+function initializeEQControls() {
+    updateEQDisplays();
+}
+
+/**
+ * 更新EQ显示
+ */
+function updateEQDisplays() {
+    updateEQDisplay('15', eq15Settings, eq15PageIndex);
+    updateEQDisplay('31', eq31Settings, eq31PageIndex);
+    updatePageInfo();
+}
+
+/**
+ * 更新单个EQ显示
+ */
+function updateEQDisplay(eqType, settings, pageIndex) {
+    const container = document.getElementById(`eq${eqType}Channels`);
+    const perPage = eqType === '15' ? eq15PerPage : eq31PerPage;
+    const freqs = eqType === '15' ?
+        [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000] :
+        [20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500,
+            630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
+            8000, 10000, 12500, 16000, 20000];
+
+    container.innerHTML = '';
+
+    const startIndex = pageIndex * perPage;
+    const endIndex = Math.min(startIndex + perPage, settings.length);
+
+    for (let i = startIndex; i < endIndex; i++) {
+        const freq = freqs[i];
+        const value = settings[i];
+
+        const channel = document.createElement('div');
+        channel.className = 'eq-channel';
+
+        channel.innerHTML = `
+            <div class="eq-frequency-label">${formatFrequency(freq)}</div>
+            <div class="eq-slider-container" onclick="handleEQClick(event, '${eqType}', ${i})">
+                <div class="eq-slider-track"></div>
+                <div class="eq-slider-center"></div>
+                <div class="eq-slider-handle ${value > 0 ? 'positive' : value < 0 ? 'negative' : ''}"
+                    style="top: ${(12 - value) / 24 * 156 / 180 * 100}%"
+                    onmousedown="startEQDrag(event, '${eqType}', ${i})"></div>
+            </div>
+            <div class="eq-value-label ${value > 0 ? 'positive' : value < 0 ? 'negative' : ''}"
+                 ondblclick="editEQValue('${eqType}', ${i})">${value.toFixed(1)}dB</div>
+        `;
+
+        container.appendChild(channel);
+    }
+}
+
+/**
+ * 格式化频率显示
+ */
+function formatFrequency(freq) {
+    if (freq >= 1000) {
+        return (freq / 1000).toString().replace('.', '.') + 'k';
+    }
+    return freq.toString();
+}
+
+/**
+ * 处理EQ点击
+ */
+function handleEQClick(event, eqType, index) {
+    event.preventDefault();
+    const container = event.currentTarget;
+    const rect = container.getBoundingClientRect();
+    const y = event.clientY - rect.top;
+    const percentage = Math.max(0, Math.min(100, (y / rect.height) * 100));
+    const value = Math.max(-12, Math.min(12, (50 - percentage) * 12 / 40));
+
+    setEQValue(eqType, index, value);
+}
+
+/**
+ * 开始EQ拖拽
+ */
+function startEQDrag(event, eqType, index) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const startY = event.clientY;
+    const container = event.currentTarget.parentElement;
+    const rect = container.getBoundingClientRect();
+    const startValue = eqType === '15' ? eq15Settings[index] : eq31Settings[index];
+
+    function onMouseMove(e) {
+        const deltaY = e.clientY - startY;
+        const valueChange = -(deltaY / rect.height) * 24; // 24dB 总范围
+        const newValue = Math.max(-12, Math.min(12, startValue + valueChange));
+        setEQValue(eqType, index, newValue);
+    }
+
+    function onMouseUp() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+}
+
+/**
+ * 当EQ设置更改时，也要更新音频EQ
+ */
+function setEQValue(eqType, index, value) {
+    value = Math.round(value * 10) / 10; // 保留1位小数
+
+    if (eqType === '15') {
+        eq15Settings[index] = value;
+    } else {
+        eq31Settings[index] = value;
+    }
+
+    updateEQDisplays();
+    updatePredictedCurves();
+
+    // 如果当前正在使用这个EQ类型，立即更新音频效果
+    if ((eqType === '15' && currentEQType === 'eq15') ||
+        (eqType === '31' && currentEQType === 'eq31')) {
+        updateAudioEQ();
+    }
+}
+
+/**
+ * 编辑EQ值
+ */
+function editEQValue(eqType, index) {
+    const currentValue = eqType === '15' ? eq15Settings[index] : eq31Settings[index];
+    const newValue = prompt('输入EQ值 (-12到+12):', currentValue.toFixed(1));
+
+    if (newValue !== null) {
+        const value = parseFloat(newValue);
+        if (!isNaN(value)) {
+            setEQValue(eqType, index, Math.max(-12, Math.min(12, value)));
+        }
+    }
+}
+
+/**
+ * 更新预测曲线
+ */
+function updatePredictedCurves() {
+    if (!analysisResults || !currentChart) return;
+
+    // 重新计算EQ应用后的曲线
+    const originalData = analysisResults.chart_data.measured_spectrum_diff;
+    const frequencies = analysisResults.chart_data.frequencies;
+
+    // 计算15段EQ效果
+    const eq15Applied = applyEQToCurve(frequencies, originalData, eq15Settings, '15');
+
+    // 计算31段EQ效果
+    const eq31Applied = applyEQToCurve(frequencies, originalData, eq31Settings, '31');
+
+    // 更新图表数据
+    const updatedChartData = {
+        ...analysisResults.chart_data,
+        eq_15_applied_diff: eq15Applied,
+        eq_31_applied_diff: eq31Applied
+    };
+
+    // 重新绘制图表
+    drawFrequencyChart(updatedChartData);
+
+    // 更新频率极限
+    updatePredictedFrequencyLimits(frequencies, eq15Applied, eq31Applied);
+}
+
+/**
+ * 最终修复版：标准Web Audio API双二阶峰值滤波器
+ * 使用统一的系数计算公式，正确处理正负增益
+ */
+function calculateBiquadPeakingResponse(frequency, centerFreq, Q, gainDb) {
+    // 基础验证
+    if (!isFinite(frequency) || !isFinite(centerFreq) || !isFinite(Q) || !isFinite(gainDb)) {
+        return 0;
+    }
+
+    if (frequency <= 0 || centerFreq <= 0 || Q <= 0.01) {
+        return 0;
+    }
+
+    // 限制增益范围
+    gainDb = Math.max(-60, Math.min(60, gainDb));
+
+    // 如果增益很小，直接返回0
+    if (Math.abs(gainDb) < 0.01) {
+        return 0;
+    }
+
+    try {
+        // Web Audio API标准实现
+        const A = Math.pow(10, gainDb / 40);  // 幅度增益因子
+
+        // 假设采样率44.1kHz
+        const sampleRate = 44100;
+        const w0 = 2 * Math.PI * centerFreq / sampleRate;  // 中心频率的归一化角频率
+        const cos_w0 = Math.cos(w0);
+        const sin_w0 = Math.sin(w0);
+        const alpha = sin_w0 / (2 * Q);
+
+        // 验证中间参数
+        if (!isFinite(A) || !isFinite(w0) || !isFinite(alpha)) {
+            return 0;
+        }
+
+        // 标准峰值滤波器系数 - 统一公式
+        const b0 = 1 + alpha * A;
+        const b1 = -2 * cos_w0;
+        const b2 = 1 - alpha * A;
+        const a0 = 1 + alpha / A;
+        const a1 = -2 * cos_w0;
+        const a2 = 1 - alpha / A;
+
+        // 验证系数
+        if (!isFinite(b0) || !isFinite(b1) || !isFinite(b2) ||
+            !isFinite(a0) || !isFinite(a1) || !isFinite(a2) || Math.abs(a0) < 1e-10) {
+            return 0;
+        }
+
+        // 归一化系数
+        const norm_b0 = b0 / a0;
+        const norm_b1 = b1 / a0;
+        const norm_b2 = b2 / a0;
+        const norm_a1 = a1 / a0;
+        const norm_a2 = a2 / a0;
+
+        // 计算目标频率的频率响应
+        const w = 2 * Math.PI * frequency / sampleRate;  // 目标频率的归一化角频率
+        const cos_w = Math.cos(w);
+        const sin_w = Math.sin(w);
+
+        // 验证目标频率参数
+        if (!isFinite(w) || !isFinite(cos_w) || !isFinite(sin_w)) {
+            return 0;
+        }
+
+        // 使用复数形式计算频率响应
+        // H(e^jw) = (b0 + b1*e^-jw + b2*e^-j2w) / (1 + a1*e^-jw + a2*e^-j2w)
+
+        // 分子：B(e^jw) = b0 + b1*cos(w) + b2*cos(2w) + j*(-b1*sin(w) - b2*sin(2w))
+        const numerator_real = norm_b0 + norm_b1 * cos_w + norm_b2 * Math.cos(2 * w);
+        const numerator_imag = -norm_b1 * sin_w - norm_b2 * Math.sin(2 * w);
+
+        // 分母：A(e^jw) = 1 + a1*cos(w) + a2*cos(2w) + j*(-a1*sin(w) - a2*sin(2w))
+        const denominator_real = 1 + norm_a1 * cos_w + norm_a2 * Math.cos(2 * w);
+        const denominator_imag = -norm_a1 * sin_w - norm_a2 * Math.sin(2 * w);
+
+        // 验证复数部分
+        if (!isFinite(numerator_real) || !isFinite(numerator_imag) ||
+            !isFinite(denominator_real) || !isFinite(denominator_imag)) {
+            return 0;
+        }
+
+        // 计算幅度 |H(e^jw)| = |B(e^jw)| / |A(e^jw)|
+        const numerator_magnitude = Math.sqrt(numerator_real * numerator_real + numerator_imag * numerator_imag);
+        const denominator_magnitude = Math.sqrt(denominator_real * denominator_real + denominator_imag * denominator_imag);
+
+        // 验证幅度
+        if (!isFinite(numerator_magnitude) || !isFinite(denominator_magnitude) ||
+            denominator_magnitude <= 0 || numerator_magnitude <= 0) {
+            return 0;
+        }
+
+        const magnitude = numerator_magnitude / denominator_magnitude;
+
+        if (!isFinite(magnitude) || magnitude <= 0) {
+            return 0;
+        }
+
+        // 转换为dB
+        const responseDb = 20 * Math.log10(magnitude);
+
+        if (!isFinite(responseDb)) {
+            return 0;
+        }
+
+        // 返回结果
+        return Math.max(-60, Math.min(60, responseDb));
+
+    } catch (error) {
+        console.warn('滤波器响应计算错误:', error);
+        return 0;
+    }
+}
+
+/**
+ * 修复版：改进的EQ曲线计算
+ * 添加了完整的错误处理和数据验证
+ */
+function applyEQToCurve(frequencies, originalCurve, eqSettings, eqType) {
+    // 输入验证
+    if (!frequencies || !originalCurve || !eqSettings || !eqType) {
+        console.error('applyEQToCurve: 无效的输入参数');
+        return originalCurve || [];
+    }
+
+    if (frequencies.length !== originalCurve.length) {
+        console.error('applyEQToCurve: 频率数组和曲线数组长度不匹配');
+        return originalCurve;
+    }
+
+    const eqFreqs = eqType === '15' ?
+        [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000] :
+        [20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500,
+            630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
+            8000, 10000, 12500, 16000, 20000];
+
+    const qFactor = eqType === '15' ? 2.15 : 4.31;
+
+    try {
+        return originalCurve.map((originalValue, i) => {
+            // 验证输入值
+            if (!isFinite(originalValue)) {
+                console.warn(`无效的原始值在索引 ${i}: ${originalValue}`);
+                return 0;
+            }
+
+            const freq = frequencies[i];
+            if (!isFinite(freq) || freq <= 0) {
+                console.warn(`无效的频率在索引 ${i}: ${freq}`);
+                return originalValue;
+            }
+
+            let cascadedMagnitude = 1.0; // 线性域的级联幅度
+
+            // 计算所有有效滤波器的串联效果
+            eqFreqs.forEach((eqFreq, eqIndex) => {
+                if (eqIndex >= eqSettings.length) return;
+
+                const gain = eqSettings[eqIndex];
+                if (!isFinite(gain)) {
+                    console.warn(`无效的EQ增益在索引 ${eqIndex}: ${gain}`);
+                    return;
+                }
+
+                if (Math.abs(gain) >= 0.1) { // 只计算有显著增益的滤波器
+                    const responseDb = calculateBiquadPeakingResponse(freq, eqFreq, qFactor, gain);
+
+                    if (isFinite(responseDb)) {
+                        const responseMagnitude = Math.pow(10, responseDb / 20);
+
+                        if (isFinite(responseMagnitude) && responseMagnitude > 0) {
+                            cascadedMagnitude *= responseMagnitude;
+                        }
+                    }
+                }
+            });
+
+            // 验证级联结果
+            if (!isFinite(cascadedMagnitude) || cascadedMagnitude <= 0) {
+                console.warn(`无效的级联幅度在频率 ${freq}Hz: ${cascadedMagnitude}`);
+                return originalValue;
+            }
+
+            const totalResponseDb = 20 * Math.log10(cascadedMagnitude);
+
+            if (!isFinite(totalResponseDb)) {
+                console.warn(`无效的响应在频率 ${freq}Hz: ${totalResponseDb}`);
+                return originalValue;
+            }
+
+            const result = originalValue + totalResponseDb;
+
+            // 最终验证
+            if (!isFinite(result)) {
+                console.warn(`最终结果无效在频率 ${freq}Hz: ${result}`);
+                return originalValue;
+            }
+
+            return result;
+        });
+
+    } catch (error) {
+        console.error('EQ曲线计算错误:', error);
+        return originalCurve;
+    }
+}
+
+/**
+ * 更新预测频率极限
+ */
+function updatePredictedFrequencyLimits(frequencies, eq15Applied, eq31Applied) {
+    const eq15Limits = calculateFrequencyLimits(frequencies, eq15Applied);
+    const eq31Limits = calculateFrequencyLimits(frequencies, eq31Applied);
+
+    const limits = {
+        eq_15: eq15Limits,
+        eq_31: eq31Limits
+    };
+
+    updateFrequencyLimits(limits);
+}
+
+function calculateFrequencyLimits(frequencies, spectrum) {
+    // 基础调试：函数调用与输入验证
+    // console.log("[频率极限计算] 开始执行");
+
+    // 输入验证
+    if (!frequencies || !spectrum || frequencies.length !== spectrum.length) {
+        // console.error("[频率极限计算] 错误：输入数组无效或长度不匹配");
+        return { low: null, high: null };
+    }
+
+    // 1. 确定1kHz参考点和阈值
+    const refFrequency = 1000;
+    const refIndex = frequencies.findIndex(f => f >= refFrequency);
+    if (refIndex === -1) {
+        // console.error("[频率极限计算] 错误：未找到1kHz及以上参考点");
+        return { low: null, high: null };
+    }
+
+    const refLevel = spectrum[refIndex];
+    const threshold = refLevel - 6;
+    // console.log(`[频率极限计算] 参考点：${frequencies[refIndex]}Hz（${refLevel.toFixed(2)}dB），-6dB阈值：${threshold.toFixed(2)}dB`);
+
+    // 2. 计算低频极限（简化日志）
+    let lowLimit = null;
+    for (let i = 0; i < frequencies.length; i++) {
+        const currentFreq = frequencies[i];
+        if (currentFreq >= refFrequency) break; // 只处理1kHz以下
+
+        const currentLevel = spectrum[i];
+        // 条件1：高于阈值
+        if (currentLevel < threshold) continue;
+
+        // 条件2：左侧所有点均更低
+        let isLeftAllLower = true;
+        for (let j = 0; j < i; j++) {
+            if (spectrum[j] >= currentLevel) {
+                isLeftAllLower = false;
+                break;
+            }
+        }
+
+        if (isLeftAllLower) {
+            lowLimit = currentFreq;
+            // console.log(`[频率极限计算] 低频极限确定：${lowLimit}Hz（满足左侧全低且高于阈值）`);
+            break;
+        }
+    }
+
+    if (!lowLimit) {
+        // console.log("[频率极限计算] 未找到符合条件的低频极限点");
+    }
+
+    // 3. 计算高频极限（简化日志）
+    let highLimit = null;
+    for (let i = refIndex; i < frequencies.length; i++) {
+        if (spectrum[i] < threshold) {
+            highLimit = i > 0 ? frequencies[i - 1] : null;
+            // console.log(`[频率极限计算] 高频极限确定：${highLimit}Hz（前一点点高于阈值）`);
+            break;
+        }
+    }
+
+    if (!highLimit) {
+        const maxFreq = frequencies[frequencies.length - 1];
+        highLimit = maxFreq >= 18000 ? 20000 : maxFreq;
+        // console.log(`[频率极限计算] 高频极限确定：${highLimit}Hz（所有点均高于阈值）`);
+    }
+
+    // 最终结果
+    // console.log(`[频率极限计算] 完成：低频=${lowLimit}Hz，高频=${highLimit}Hz`);
+    return { low: lowLimit, high: highLimit };
+}
+
+
+
+/**
+ * 翻页控制
+ */
+function changePage(eqType, direction) {
+    const totalPages = eqType === '15' ?
+        Math.ceil(15 / eq15PerPage) :
+        Math.ceil(31 / eq31PerPage);
+
+    if (eqType === '15') {
+        eq15PageIndex = Math.max(0, Math.min(totalPages - 1, eq15PageIndex + direction));
+    } else {
+        eq31PageIndex = Math.max(0, Math.min(totalPages - 1, eq31PageIndex + direction));
+    }
+
+    updateEQDisplays();
+}
+
+/**
+ * 更新分页信息
+ */
+function updatePageInfo() {
+    const eq15TotalPages = Math.ceil(15 / eq15PerPage);
+    const eq31TotalPages = Math.ceil(31 / eq31PerPage);
+
+    document.getElementById('eq15PageInfo').textContent =
+        `第${eq15PageIndex + 1}页/共${eq15TotalPages}页`;
+    document.getElementById('eq31PageInfo').textContent =
+        `第${eq31PageIndex + 1}页/共${eq31TotalPages}页`;
+
+    // 更新按钮状态
+    document.getElementById('eq15PrevBtn').disabled = eq15PageIndex === 0;
+    document.getElementById('eq15NextBtn').disabled = eq15PageIndex === eq15TotalPages - 1;
+    document.getElementById('eq31PrevBtn').disabled = eq31PageIndex === 0;
+    document.getElementById('eq31NextBtn').disabled = eq31PageIndex === eq31TotalPages - 1;
+}
+
+/**
+ * 重置EQ
+ */
+function resetEQ(eqType) {
+    if (!analysisResults) return;
+
+    if (eqType === '15') {
+        eq15Settings = analysisResults.eq_suggestions.eq_15.map(item =>
+            parseFloat(item.adjustment.replace(/[^-\d.]/g, ''))
+        );
+    } else {
+        eq31Settings = analysisResults.eq_suggestions.eq_31.map(item =>
+            parseFloat(item.adjustment.replace(/[^-\d.]/g, ''))
+        );
+    }
+
+    updateEQDisplays();
+    updatePredictedCurves();
+
+    // ✅ 新增：如果当前正在使用这个EQ类型，立即更新音频效果
+    if ((eqType === '15' && currentEQType === 'eq15') ||
+        (eqType === '31' && currentEQType === 'eq31')) {
+        updateAudioEQ();
+        showEQUpdateFeedback(currentEQType);
+    }
+}
+
+/**
+ * 归零EQ
+ */
+function zeroAllEQ(eqType) {
+    if (eqType === '15') {
+        eq15Settings.fill(0);
+    } else {
+        eq31Settings.fill(0);
+    }
+
+    updateEQDisplays();
+    updatePredictedCurves();
+
+    // ✅ 新增：如果当前正在使用这个EQ类型，立即更新音频效果
+    if ((eqType === '15' && currentEQType === 'eq15') ||
+        (eqType === '31' && currentEQType === 'eq31')) {
+        updateAudioEQ();
+        showEQUpdateFeedback(currentEQType);
+    }
+}
+
+/**
+ * 初始化曲线控制
+ */
+function initializeCurveControls() {
+    const controls = document.querySelectorAll('.curve-toggle');
+    controls.forEach(control => {
+        control.addEventListener('click', function () {
+            const curve = this.dataset.curve;
+            curveVisibility[curve] = !curveVisibility[curve];
+            this.classList.toggle('active', curveVisibility[curve]);
+
+            if (currentChart) {
+                drawFrequencyChart(currentChart.chartData);
+            }
+        });
+    });
+}
+
+/**
+ * 重新实现EQ类型切换
+ */
+function initializeAudioControls() {
+    const testAudioFile = document.getElementById('testAudioFile');
+    const audioUploadArea = document.getElementById('audioUploadArea');
+    const eqToggleButtons = document.querySelectorAll('.eq-toggle-button');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    // 音频文件上传
+    testAudioFile.addEventListener('change', handleAudioFileUpload);
+    audioUploadArea.addEventListener('click', () => testAudioFile.click());
+
+    // 拖拽上传音频
+    audioUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        audioUploadArea.classList.add('dragover');
+    });
+
+    audioUploadArea.addEventListener('dragleave', () => {
+        audioUploadArea.classList.remove('dragover');
+    });
+
+    audioUploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        audioUploadArea.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        const audioFile = files.find(file => file.type.startsWith('audio/'));
+        if (audioFile) {
+            loadAudioFile(audioFile);
+        }
+    });
+
+    // EQ类型切换 - 增强版
+    eqToggleButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            // 更新按钮状态
+            eqToggleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // 设置EQ类型
+            const newEQType = this.dataset.eqType;
+            console.log(`切换EQ类型: ${currentEQType} -> ${newEQType}`);
+
+            currentEQType = newEQType;
+
+            // 立即应用EQ更改
+            updateAudioEQ();
+
+            // 显示切换反馈
+            showEQSwitchFeedback(newEQType);
+        });
+    });
+}
+
+/**
+ * 显示EQ切换反馈
+ */
+function showEQSwitchFeedback(eqType) {
+    const messages = {
+        'none': '已切换到原始音频（无EQ效果）',
+        'eq15': '已应用15段EQ效果',
+        'eq31': '已应用31段EQ效果'
+    };
+
+    const message = messages[eqType] || '已切换EQ';
+
+    // 创建临时提示
+    const feedback = document.createElement('div');
+    feedback.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 6px;
+        font-weight: 500;
+        z-index: 2000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    feedback.textContent = message;
+
+    document.body.appendChild(feedback);
+
+    // 1.5秒后移除
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+        }
+    }, 1500);
+}
+
+/**
+ * 处理音频文件上传
+ */
+function handleAudioFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        loadAudioFile(file);
+    }
+}
+
+/**
+ * 重新实现加载音频文件函数，支持EQ处理
+ */
+function loadAudioFile(file) {
+    if (!file.type.startsWith('audio/')) {
+        showError('请选择有效的音频文件');
+        return;
+    }
+
+    const url = URL.createObjectURL(file);
+
+    // ✅ 记住当前的播放状态和播放位置
+    const wasPlaying = isPlaying;
+    const currentPosition = currentAudio ? currentAudio.currentTime : 0;
+
+    console.log(`加载新音频文件: ${file.name}, 之前状态: ${wasPlaying ? '播放中' : '暂停'}`);
+
+    // 清理旧的音频资源
+    if (currentAudio) {
+        currentAudio.pause();
+        URL.revokeObjectURL(currentAudio.src);
+        disconnectAudioProcessing();
+    }
+
+    // 重置播放状态
+    isPlaying = false;
+    currentTime = 0;
+    totalDuration = 0;
+
+    // 创建新的音频对象
+    currentAudio = new Audio(url);
+    currentAudio.crossOrigin = 'anonymous';
+    currentAudio.volume = document.getElementById('volumeSlider').value / 100;
+
+    currentAudio.addEventListener('loadedmetadata', function () {
+        totalDuration = this.duration;
+        document.getElementById('totalTime').textContent = formatTime(totalDuration);
+        document.getElementById('audioInfo').textContent = file.name;
+        document.getElementById('audioControlsPanel').style.display = 'block';
+
+        // 初始化音频处理
+        setupAudioProcessing();
+
+        // ✅ 如果之前正在播放，自动开始播放新文件
+        if (wasPlaying) {
+            console.log('自动播放新文件...');
+            autoPlayNewFile();
+        } else {
+            // 确保按钮状态正确
+            document.getElementById('playPauseBtn').textContent = '播放';
+        }
+    });
+
+    currentAudio.addEventListener('timeupdate', updateProgress);
+    currentAudio.addEventListener('ended', function () {
+        isPlaying = false;
+        document.getElementById('playPauseBtn').textContent = '播放';
+    });
+
+    currentAudio.addEventListener('error', function () {
+        showError('音频文件加载失败');
+        isPlaying = false;
+        document.getElementById('playPauseBtn').textContent = '播放';
+    });
+}
+
+/**
+ * 自动播放新文件 - 新增函数
+ */
+function autoPlayNewFile() {
+    if (!currentAudio) return;
+
+    // 确保AudioContext处于激活状态
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            performAutoPlay();
+        }).catch(error => {
+            console.error('恢复AudioContext失败:', error);
+            performAutoPlay(); // 仍然尝试播放
+        });
+    } else {
+        performAutoPlay();
+    }
+}
+
+/**
+ * 执行自动播放 - 新增函数
+ */
+function performAutoPlay() {
+    const playPromise = currentAudio.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isPlaying = true;
+            document.getElementById('playPauseBtn').textContent = '暂停';
+            console.log('新文件自动播放成功');
+
+            // 显示文件切换提示
+            showFileChangeFeedback();
+        }).catch(error => {
+            console.error('自动播放失败:', error);
+            isPlaying = false;
+            document.getElementById('playPauseBtn').textContent = '播放';
+
+            // 如果自动播放失败，提示用户手动播放
+            showError('新文件已加载，请手动点击播放');
+        });
+    }
+}
+
+/**
+ * 显示文件切换反馈 - 新增函数
+ */
+function showFileChangeFeedback() {
+    const feedback = document.createElement('div');
+    feedback.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(23, 162, 184, 0.9);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        z-index: 2000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-size: 14px;
+    `;
+    feedback.textContent = '新音频文件已加载并开始播放';
+
+    document.body.appendChild(feedback);
+
+    // 2秒后移除
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+        }
+    }, 2000);
+}
+
+/**
+ * 设置音频处理链
+ */
+function setupAudioProcessing() {
+    try {
+        // 初始化AudioContext
+        initializeAudioContext();
+
+        // 断开之前的连接
+        disconnectAudioProcessing();
+
+        // 创建音频源
+        audioSource = audioContext.createMediaElementSource(currentAudio);
+
+        // 创建预衰减增益节点（防削波）
+        preGainNode = audioContext.createGain();
+        preGainNode.gain.value = PRE_GAIN_LINEAR; // 统一-12dB预衰减
+
+        // 创建主增益节点（用于音量控制和响度补偿）
+        gainNode = audioContext.createGain();
+
+        // 创建分析器节点（可选，用于可视化）
+        analyzerNode = audioContext.createAnalyser();
+        analyzerNode.fftSize = 2048;
+
+        // 创建EQ滤波器链
+        createEQFilterChains();
+
+        // 连接音频处理链
+        connectAudioNodes();
+
+        console.log('音频处理链设置完成，预衰减:', PRE_GAIN_DB, 'dB');
+
+        // 应用当前EQ设置
+        updateAudioEQ();
+
+    } catch (error) {
+        console.error('音频处理设置失败:', error);
+        showError('音频处理初始化失败: ' + error.message);
+    }
+}
+
+/**
+ * 创建EQ滤波器链
+ */
+function createEQFilterChains() {
+    // 15段EQ频率和Q值
+    const eq15Frequencies = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000];
+    const eq15Q = 2.15;
+
+    // 31段EQ频率和Q值
+    const eq31Frequencies = [20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500,
+        630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
+        8000, 10000, 12500, 16000, 20000];
+    const eq31Q = 4.31;
+
+    // 清空现有滤波器
+    eq15FilterNodes = [];
+    eq31FilterNodes = [];
+
+    // 创建15段EQ滤波器
+    eq15Frequencies.forEach((frequency, index) => {
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'peaking';
+        filter.frequency.value = frequency;
+        filter.Q.value = eq15Q;
+        filter.gain.value = 0; // 初始增益为0dB
+        eq15FilterNodes.push(filter);
+    });
+
+    // 创建31段EQ滤波器
+    eq31Frequencies.forEach((frequency, index) => {
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'peaking';
+        filter.frequency.value = frequency;
+        filter.Q.value = eq31Q;
+        filter.gain.value = 0; // 初始增益为0dB
+        eq31FilterNodes.push(filter);
+    });
+
+    console.log(`创建了${eq15FilterNodes.length}个15段EQ滤波器和${eq31FilterNodes.length}个31段EQ滤波器`);
+}
+
+/**
+ * 连接音频节点 - 包含预衰减
+ */
+function connectAudioNodes() {
+    if (!audioSource || !preGainNode || !gainNode || !analyzerNode) {
+        throw new Error('音频节点未正确创建');
+    }
+
+    // 基础连接：音频源 -> 预衰减 -> 主增益 -> 分析器 -> 输出
+    audioSource.connect(preGainNode);
+    preGainNode.connect(gainNode);
+    gainNode.connect(analyzerNode);
+    analyzerNode.connect(audioContext.destination);
+
+    console.log('音频节点连接完成，包含预衰减');
+}
+
+/**
+ * 断开音频处理连接 - 包含预衰减节点
+ */
+function disconnectAudioProcessing() {
+    try {
+        // 断开所有连接
+        if (audioSource) {
+            audioSource.disconnect();
+            audioSource = null;
+        }
+
+        if (preGainNode) {
+            preGainNode.disconnect();
+            preGainNode = null;
+        }
+
+        if (gainNode) {
+            gainNode.disconnect();
+            gainNode = null;
+        }
+
+        if (analyzerNode) {
+            analyzerNode.disconnect();
+            analyzerNode = null;
+        }
+
+        // 断开EQ滤波器
+        eq15FilterNodes.forEach(filter => {
+            try {
+                filter.disconnect();
+            } catch (e) {
+                // 忽略已断开的节点
+            }
+        });
+
+        eq31FilterNodes.forEach(filter => {
+            try {
+                filter.disconnect();
+            } catch (e) {
+                // 忽略已断开的节点
+            }
+        });
+
+        eq15FilterNodes = [];
+        eq31FilterNodes = [];
+
+    } catch (error) {
+        console.error('断开音频连接时出错:', error);
+    }
+}
+
+/**
+ * 改进的音量控制 - 考虑响度补偿
+ */
+function updateVolumeControl() {
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    volumeSlider.addEventListener('input', function () {
+        const volume = this.value / 100;
+
+        // 更新HTML5 Audio元素音量（作为备用）
+        if (currentAudio) {
+            currentAudio.volume = 1.0; // 保持最大，让Web Audio API控制音量
+        }
+
+        // 重新应用响度补偿（包含新的用户音量）
+        updateAudioEQ();
+
+        document.getElementById('volumeValue').textContent = this.value + '%';
+    });
+}
+
+/**
+ * 初始化音频上下文和EQ处理链
+ */
+function initializeAudioContext() {
+    if (!audioContext) {
+        // 创建AudioContext
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    // 确保AudioContext处于运行状态
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+/**
+ * 更新音频EQ - 统一响度匹配版本
+ */
+function updateAudioEQ() {
+    if (!audioContext || !audioSource || !preGainNode || !gainNode || !analyzerNode) {
+        console.log('音频处理链未初始化，跳过EQ更新');
+        return;
+    }
+
+    try {
+        // 断开当前的EQ连接，重新连接
+        disconnectEQChain();
+
+        // 计算统一响度基准
+        const loudnessBasis = calculateUnifiedLoudnessBasis();
+        let finalCompensation;
+
+        if (currentEQType === 'none') {
+            // 无EQ：使用基准补偿
+            preGainNode.connect(gainNode);
+            finalCompensation = loudnessBasis.baseline;
+
+        } else if (currentEQType === 'eq15') {
+            // 应用15段EQ
+            applyEQChain(eq15FilterNodes, eq15Settings);
+            finalCompensation = loudnessBasis.eq15Compensation;
+
+        } else if (currentEQType === 'eq31') {
+            // 应用31段EQ
+            applyEQChain(eq31FilterNodes, eq31Settings);
+            finalCompensation = loudnessBasis.eq31Compensation;
+        }
+
+        // 安全检查：确保最终增益不会导致削波
+        const currentEQSettings = currentEQType === 'eq15' ? eq15Settings :
+            currentEQType === 'eq31' ? eq31Settings :
+                new Array(15).fill(0);
+
+        const safeLimit = calculateSafeGainLimit(currentEQSettings);
+        finalCompensation = Math.min(finalCompensation, safeLimit);
+
+        // 应用最终响度补偿
+        applyUnifiedLoudnessCompensation(finalCompensation);
+
+        // 连接到输出
+        gainNode.connect(analyzerNode);
+        analyzerNode.connect(audioContext.destination);
+
+        console.log(`EQ更新完成，类型: ${currentEQType}, 统一响度补偿: ${finalCompensation.toFixed(1)}dB`);
+
+        // 更新显示
+        updateUnifiedLoudnessIndicator(finalCompensation, loudnessBasis);
+
+    } catch (error) {
+        console.error('更新EQ失败:', error);
+        showError('EQ更新失败: ' + error.message);
+    }
+}
+
+/**
+ * 应用统一响度补偿 - 新增函数
+ */
+function applyUnifiedLoudnessCompensation(compensationDb) {
+    if (!gainNode) return;
+
+    // 转换为线性增益
+    const compensationLinear = Math.pow(10, compensationDb / 20);
+
+    // 应用用户音量设置
+    const userVolume = document.getElementById('volumeSlider').value / 100;
+    const finalGain = compensationLinear * userVolume;
+
+    // 平滑过渡到新增益
+    gainNode.gain.setTargetAtTime(finalGain, audioContext.currentTime, 0.05);
+
+    console.log(`统一响度补偿: ${compensationDb.toFixed(1)}dB, 用户音量: ${(userVolume * 100).toFixed(0)}%, 最终增益: ${(20 * Math.log10(finalGain)).toFixed(1)}dB`);
+}
+
+/**
+ * 更新统一响度指示器 - 新增函数
+ */
+function updateUnifiedLoudnessIndicator(finalCompensation, loudnessBasis) {
+    const indicator = document.getElementById('loudnessIndicator');
+    const preGainText = `预衰减: ${PRE_GAIN_DB}dB`;
+    const baselineText = `统一基线: ${loudnessBasis.baseline.toFixed(1)}dB`;
+    const finalText = `最终补偿: ${finalCompensation.toFixed(1)}dB`;
+    const totalText = `净调整: ${(PRE_GAIN_DB + finalCompensation).toFixed(1)}dB`;
+
+    // 安全状态指示
+    const currentEQSettings = currentEQType === 'eq15' ? eq15Settings :
+        currentEQType === 'eq31' ? eq31Settings :
+            new Array(15).fill(0);
+    const maxEQGain = Math.max(0, ...currentEQSettings);
+    const theoreticalMax = PRE_GAIN_DB + finalCompensation + maxEQGain;
+    const safetyStatus = theoreticalMax <= -1 ? '✓ 安全' : '⚠ 注意';
+    const safetyColor = theoreticalMax <= -1 ? '#28a745' : '#ffc107';
+
+    indicator.innerHTML = `
+        <div style="font-size: 12px; line-height: 1.4;">
+            <div>${preGainText} (防削波)</div>
+            <div>${baselineText} (统一基准)</div>
+            <div>${finalText} (当前模式)</div>
+            <div style="font-weight: bold; color: #2c5aa0;">${totalText}</div>
+            <div style="font-weight: bold; color: ${safetyColor}; margin-top: 2px;">${safetyStatus}</div>
+        </div>
+    `;
+}
+
+/**
+ * 断开EQ链连接 - 改进版
+ */
+function disconnectEQChain() {
+    try {
+        // 断开预衰减节点
+        if (preGainNode) {
+            preGainNode.disconnect();
+        }
+
+        // 断开主增益节点
+        if (gainNode) {
+            gainNode.disconnect();
+        }
+
+        // 断开分析器
+        if (analyzerNode) {
+            analyzerNode.disconnect();
+        }
+
+        // 断开所有EQ滤波器
+        [...eq15FilterNodes, ...eq31FilterNodes].forEach(filter => {
+            try {
+                filter.disconnect();
+            } catch (e) {
+                // 节点可能已断开
+            }
+        });
+
+    } catch (error) {
+        console.error('断开EQ链时出错:', error);
+    }
+}
+
+/**
+ * 应用EQ滤波器链 - 改进版
+ */
+function applyEQChain(filterNodes, eqSettings) {
+    if (!filterNodes || filterNodes.length === 0) {
+        console.warn('EQ滤波器节点为空');
+        return;
+    }
+
+    // 更新滤波器增益值
+    filterNodes.forEach((filter, index) => {
+        if (index < eqSettings.length) {
+            const targetGain = eqSettings[index];
+            filter.gain.setTargetAtTime(targetGain, audioContext.currentTime, 0.1);
+        }
+    });
+
+    // 串联连接滤波器：预衰减 -> EQ链 -> 主增益
+    let currentNode = preGainNode;
+
+    filterNodes.forEach((filter) => {
+        currentNode.connect(filter);
+        currentNode = filter;
+    });
+
+    // 最后一个滤波器连接到主增益节点
+    currentNode.connect(gainNode);
+
+    console.log(`应用了${filterNodes.length}个EQ滤波器`);
+}
+
+/**
+ * 改进的响度补偿计算 - 基于ISO 226等响度曲线
+ */
+function calculateImprovedLoudnessCompensation(eqSettings, eqType) {
+    // 基于ISO 226等响度曲线的权重系数（40 phon等响度曲线）
+    const loudnessWeights = eqType === 'eq15' ?
+        // 15段EQ权重：基于40phon等响度曲线，1kHz = 1.0
+        [0.15, 0.25, 0.35, 0.50, 0.65, 0.80, 0.90, 0.95, 1.00, 0.95, 0.85, 0.75, 0.60, 0.45, 0.30] :
+        // 31段EQ权重：更精细的等响度曲线
+        [0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.90, 0.95, 0.98, 1.00,
+            0.98, 0.95, 1.00, 0.98, 0.95, 0.90, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.20, 0.15, 0.10];
+
+    // 计算感知响度变化（Stevens幂律修正）
+    let totalLoudnessChange = 0;
+    let totalWeight = 0;
+
+    eqSettings.forEach((gainDb, index) => {
+        if (index < loudnessWeights.length && Math.abs(gainDb) > 0.1) {
+            const weight = loudnessWeights[index];
+
+            // Stevens幂律：响度感知 ∝ 声压^0.3
+            const powerRatio = Math.pow(10, gainDb / 10);
+            const loudnessRatio = Math.pow(powerRatio, 0.3);
+            const loudnessChangeDb = 10 * Math.log10(loudnessRatio);
+
+            totalLoudnessChange += loudnessChangeDb * weight;
+            totalWeight += weight;
+        }
+    });
+
+    const avgLoudnessChange = totalWeight > 0 ? totalLoudnessChange / totalWeight : 0;
+
+    // 限制单独补偿范围
+    return Math.max(-8, Math.min(8, avgLoudnessChange));
+}
+
+/**
+ * 计算统一响度基准 - 正确版：让所有模式响度相等
+ */
+function calculateUnifiedLoudnessBasis() {
+    if (!analysisResults) {
+        return { baseline: -4, eq15Compensation: -4, eq31Compensation: -4 };
+    }
+
+    // 计算各模式的实际感知响度变化
+    const eq15LoudnessChange = calculateActualLoudnessChange(eq15Settings, 'eq15');
+    const eq31LoudnessChange = calculateActualLoudnessChange(eq31Settings, 'eq31');
+    const noneModeLoudness = 0; // 无EQ模式作为基准
+
+    console.log(`各模式感知响度变化:`);
+    console.log(`  无EQ模式: ${noneModeLoudness.toFixed(1)}dB`);
+    console.log(`  15段EQ模式: ${eq15LoudnessChange.toFixed(1)}dB`);
+    console.log(`  31段EQ模式: ${eq31LoudnessChange.toFixed(1)}dB`);
+
+    // 找到最安静的模式（最小值）
+    const minLoudness = Math.min(noneModeLoudness, eq15LoudnessChange, eq31LoudnessChange);
+
+    // 统一基准：所有模式都调整到最安静模式的水平，再减去安全余量
+    const safetyMargin = 2; // 2dB安全余量
+    const unifiedBaseline = minLoudness - safetyMargin;
+
+    // 计算各模式需要的补偿：让所有模式都达到统一基准
+    const noneCompensation = unifiedBaseline - noneModeLoudness;
+    const eq15Compensation = unifiedBaseline - eq15LoudnessChange;
+    const eq31Compensation = unifiedBaseline - eq31LoudnessChange;
+
+    console.log(`统一响度基准计算:`);
+    console.log(`  最安静模式响度: ${minLoudness.toFixed(1)}dB`);
+    console.log(`  统一基准: ${unifiedBaseline.toFixed(1)}dB`);
+    console.log(`  无EQ补偿: ${noneCompensation.toFixed(1)}dB`);
+    console.log(`  15段EQ补偿: ${eq15Compensation.toFixed(1)}dB`);
+    console.log(`  31段EQ补偿: ${eq31Compensation.toFixed(1)}dB`);
+
+    return {
+        baseline: noneCompensation,
+        eq15Compensation: eq15Compensation,
+        eq31Compensation: eq31Compensation
+    };
+}
+
+/**
+ * 计算实际感知响度变化 - 严格基于ISO 226等响度曲线
+ */
+function calculateActualLoudnessChange(eqSettings, eqType) {
+    // 基于ISO 226标准40 phon等响度曲线的精确权重
+    const iso226Weights = eqType === 'eq15' ?
+        // 15段EQ频率对应的ISO 226权重
+        [0.0079, 0.0141, 0.0316, 0.0794, 0.1995, 0.3981, 0.6310, 0.8913, 1.0000, 0.9441, 0.7943, 0.6310, 0.4467, 0.2818, 0.0794] :
+        // 31段EQ频率对应的ISO 226权重  
+        [0.0063, 0.0079, 0.0100, 0.0141, 0.0200, 0.0316, 0.0501, 0.0794, 0.1259, 0.1995, 0.3162, 0.3981, 0.5012, 0.6310, 0.7943,
+            0.8913, 0.9441, 1.0000, 1.0000, 0.9441, 0.8913, 0.7943, 0.7079, 0.6310, 0.5623, 0.4467, 0.3548, 0.2818, 0.1995, 0.0794, 0.0200];
+
+    let weightedSum = 0;
+    let totalWeight = 0;
+
+    eqSettings.forEach((gainDb, index) => {
+        if (index < iso226Weights.length && Math.abs(gainDb) > 0.1) {
+            const weight = iso226Weights[index];
+
+            // 使用功率域计算（10^(dB/10)）然后转回dB域
+            const powerRatio = Math.pow(10, gainDb / 10);
+            const weightedPowerContribution = (powerRatio - 1) * weight;
+
+            weightedSum += weightedPowerContribution;
+            totalWeight += weight;
+        }
+    });
+
+    // 计算总的加权功率变化
+    const totalWeightedPowerChange = weightedSum;
+
+    // 转换为感知响度变化（dB）
+    const loudnessChangeDb = totalWeightedPowerChange > 0 ?
+        10 * Math.log10(1 + totalWeightedPowerChange) :
+        -10 * Math.log10(1 - totalWeightedPowerChange);
+
+    return loudnessChangeDb;
+}
+
+/**
+ * 计算安全增益限制 - 新增函数
+ */
+function calculateSafeGainLimit(eqSettings) {
+    // 计算EQ的最大可能增益
+    const maxEQGain = Math.max(0, ...eqSettings);
+
+    // 安全边界：预衰减(-12dB) + EQ增益 + 安全余量(-3dB) ≤ -1dB
+    const safeLimit = -1 - PRE_GAIN_DB - maxEQGain - 3;
+
+    return Math.min(safeLimit, 0); // 确保不超过0dB
+}
+
+
+/**
+ * 应用响度补偿
+ */
+function applyLoudnessCompensation(compensationDb) {
+    if (!gainNode) return;
+
+    // 转换为线性增益
+    const compensationLinear = Math.pow(10, compensationDb / 20);
+
+    // 应用用户音量设置
+    const userVolume = document.getElementById('volumeSlider').value / 100;
+    const finalGain = compensationLinear * userVolume;
+
+    // 平滑过渡到新增益
+    gainNode.gain.setTargetAtTime(finalGain, audioContext.currentTime, 0.1);
+
+    console.log(`响度补偿: ${compensationDb.toFixed(1)}dB, 用户音量: ${(userVolume * 100).toFixed(0)}%, 最终增益: ${(20 * Math.log10(finalGain)).toFixed(1)}dB`);
+}
+
+
+/**
+ * 获取最后连接的节点
+ */
+function getLastConnectedNode() {
+    if (currentEQType === 'eq15' && eq15FilterNodes.length > 0) {
+        return eq15FilterNodes[eq15FilterNodes.length - 1];
+    } else if (currentEQType === 'eq31' && eq31FilterNodes.length > 0) {
+        return eq31FilterNodes[eq31FilterNodes.length - 1];
+    } else {
+        return audioSource;
+    }
+}
+
+/**
+ * 更新响度指示器 - 改进版显示
+ */
+function updateLoudnessIndicator(compensation) {
+    const indicator = document.getElementById('loudnessIndicator');
+    const preGainText = `预衰减: ${PRE_GAIN_DB}dB`;
+    const compensationText = `响度补偿: ${compensation.toFixed(1)}dB`;
+    const totalText = `总调整: ${(PRE_GAIN_DB + compensation).toFixed(1)}dB`;
+
+    indicator.innerHTML = `
+        <div style="font-size: 12px; line-height: 1.4;">
+            <div>${preGainText} (防削波)</div>
+            <div>${compensationText} (智能匹配)</div>
+            <div style="font-weight: bold; color: #2c5aa0;">${totalText}</div>
+        </div>
+    `;
+}
+
+/**
+ * 初始化改进的音频控制
+ */
+function initializeImprovedAudioControls() {
+    const testAudioFile = document.getElementById('testAudioFile');
+    const audioUploadArea = document.getElementById('audioUploadArea');
+    const eqToggleButtons = document.querySelectorAll('.eq-toggle-button');
+
+    // 音频文件上传
+    testAudioFile.addEventListener('change', handleAudioFileUpload);
+    audioUploadArea.addEventListener('click', () => testAudioFile.click());
+
+    // 拖拽上传音频
+    audioUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        audioUploadArea.classList.add('dragover');
+    });
+
+    audioUploadArea.addEventListener('dragleave', () => {
+        audioUploadArea.classList.remove('dragover');
+    });
+
+    audioUploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        audioUploadArea.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        const audioFile = files.find(file => file.type.startsWith('audio/'));
+        if (audioFile) {
+            loadAudioFile(audioFile);
+        }
+    });
+
+    // EQ类型切换
+    eqToggleButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            eqToggleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            const newEQType = this.dataset.eqType;
+            console.log(`切换EQ类型: ${currentEQType} -> ${newEQType}`);
+
+            currentEQType = newEQType;
+            updateAudioEQ();
+            showEQSwitchFeedback(newEQType);
+        });
+    });
+
+    // 改进的音量控制
+    updateVolumeControl();
+
+    // 设置初始音量
+    const volumeSlider = document.getElementById('volumeSlider');
+    if (volumeSlider) {
+        volumeSlider.value = 50; // 提高默认音量到50%
+        document.getElementById('volumeValue').textContent = '50%';
+    }
+
+    console.log('改进的音频控制初始化完成');
+}
+
+// 测试响度匹配的辅助函数
+function testLoudnessMatching() {
+    console.log('=== 响度匹配测试 ===');
+    console.log('预衰减:', PRE_GAIN_DB, 'dB');
+
+    // 测试不同EQ设置的响度补偿
+    const testEQ15 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 全零
+    const testEQ15Boost = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]; // 全+3dB
+    const testEQ15Cut = [-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3]; // 全-3dB
+
+    console.log('全零EQ补偿:', calculateImprovedLoudnessCompensation(testEQ15, 'eq15').toFixed(1), 'dB');
+    console.log('全+3dB EQ补偿:', calculateImprovedLoudnessCompensation(testEQ15Boost, 'eq15').toFixed(1), 'dB');
+    console.log('全-3dB EQ补偿:', calculateImprovedLoudnessCompensation(testEQ15Cut, 'eq15').toFixed(1), 'dB');
+}
+
+/**
+ * 改进的播放/暂停控制
+ */
+function togglePlayPause() {
+    if (!currentAudio) return;
+
+    // 确保AudioContext处于激活状态
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            performPlayPause();
+        }).catch(error => {
+            console.error('恢复AudioContext失败:', error);
+            performPlayPause(); // 仍然尝试播放
+        });
+    } else {
+        performPlayPause();
+    }
+}
+
+function performPlayPause() {
+    if (isPlaying) {
+        currentAudio.pause();
+        isPlaying = false;
+        document.getElementById('playPauseBtn').textContent = '播放';
+    } else {
+        const playPromise = currentAudio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                isPlaying = true;
+                document.getElementById('playPauseBtn').textContent = '暂停';
+            }).catch(error => {
+                console.error('播放失败:', error);
+                showError('音频播放失败: ' + error.message);
+            });
+        }
+    }
+}
+
+/**
+ * 停止播放
+ */
+function stopAudio() {
+    if (!currentAudio) return;
+
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    isPlaying = false;
+    document.getElementById('playPauseBtn').textContent = '播放';
+}
+
+/**
+ * 重置播放位置
+ */
+function rewindAudio() {
+    if (!currentAudio) return;
+
+    currentAudio.currentTime = 0;
+}
+
+/**
+ * 跳转播放位置
+ */
+function seekAudio(event) {
+    if (!currentAudio) return;
+
+    const progressContainer = event.currentTarget;
+    const rect = progressContainer.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const newTime = percentage * totalDuration;
+
+    currentAudio.currentTime = newTime;
+}
+
+/**
+ * 更新播放进度
+ */
+function updateProgress() {
+    if (!currentAudio) return;
+
+    currentTime = currentAudio.currentTime;
+    const percentage = (currentTime / totalDuration) * 100;
+
+    document.getElementById('progressBar').style.width = percentage + '%';
+    document.getElementById('currentTime').textContent = formatTime(currentTime);
+}
+
+/**
+ * 格式化时间
+ */
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+/**
+ * 初始化频率控制
+ */
+function initializeFrequencyControls() {
+    document.getElementById('targetLowFreq').addEventListener('change', updateFrequencyRange);
+    document.getElementById('targetHighFreq').addEventListener('change', updateFrequencyRange);
+}
+
+/**
+ * 更新频率范围
+ */
+function updateFrequencyRange() {
+    targetLowFreq = parseInt(document.getElementById('targetLowFreq').value);
+    targetHighFreq = parseInt(document.getElementById('targetHighFreq').value);
+
+    // 验证范围
+    if (targetLowFreq >= targetHighFreq) {
+        showError('低频极限必须小于高频极限');
+        return;
+    }
+
+    console.log(`目标频率范围更新: ${targetLowFreq}Hz - ${targetHighFreq}Hz`);
+}
+
+/**
+ * 重新优化EQ - 使用后端完整算法
+ */
+async function reoptimizeEQ() {
+    if (!analysisResults) {
+        showError('请先完成音频分析');
+        return;
+    }
+
+    console.log(`重新优化EQ，目标范围: ${targetLowFreq}Hz - ${targetHighFreq}Hz（使用后端算法）`);
+
+    // 显示加载状态
+    // showLoading();
+
+    try {
+        // 记录当前EQ类型，用于判断是否需要实时更新音频
+        const wasUsingEQ15 = (currentEQType === 'eq15');
+        const wasUsingEQ31 = (currentEQType === 'eq31');
+
+        // 准备发送给后端的数据
+        const requestData = {
+            frequencies: analysisResults.chart_data.frequencies,
+            measured_spectrum_diff: analysisResults.chart_data.measured_spectrum_diff,
+            target_low_freq: targetLowFreq,
+            target_high_freq: targetHighFreq
+        };
+
+        console.log('向后端发送重新优化请求...');
+
+        // 调用后端API
+        const response = await fetch('/api/reoptimize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            console.log('后端重新优化成功');
+
+            // 更新EQ设置
+            eq15Settings = result.eq_15_settings;
+            eq31Settings = result.eq_31_settings;
+
+            // 更新图表数据
+            const updatedChartData = {
+                ...analysisResults.chart_data,
+                eq_15_applied_diff: result.eq_15_applied_diff,
+                eq_31_applied_diff: result.eq_31_applied_diff
+            };
+
+            // 重新绘制图表
+            drawFrequencyChart(updatedChartData);
+
+            // 更新显示
+            updateEQDisplays();
+
+            // 更新频率极限
+            updateFrequencyLimits(result.frequency_limits);
+
+            // 如果当前正在使用EQ进行音频试听，立即更新音频效果
+            if (wasUsingEQ15 || wasUsingEQ31) {
+                console.log(`检测到当前正在使用${currentEQType}，立即更新音频EQ效果`);
+                updateAudioEQ();
+                showEQUpdateFeedback(currentEQType);
+            }
+
+            console.log('EQ重新优化完成（后端算法）');
+
+            // 显示成功提示
+            const successMsg = `EQ已使用后端完整算法重新优化 | 目标频率范围: ${targetLowFreq}Hz - ${targetHighFreq}Hz`;
+            showSuccessMessage(successMsg);
+
+        } else {
+            throw new Error(result.error || '后端重新优化失败');
+        }
+
+    } catch (error) {
+        console.error('重新优化EQ失败:', error);
+        showError('重新优化失败: ' + error.message);
+    } finally {
+        // hideLoading();
+    }
+}
+
+/**
+ * 显示EQ更新反馈 - 新增函数
+ */
+function showEQUpdateFeedback(eqType) {
+    const messages = {
+        'eq15': '15段EQ音频效果已实时更新',
+        'eq31': '31段EQ音频效果已实时更新'
+    };
+
+    const message = messages[eqType];
+    if (!message) return;
+
+    // 创建临时提示
+    const feedback = document.createElement('div');
+    feedback.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(40, 167, 69, 0.9);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        z-index: 2000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-size: 14px;
+    `;
+    feedback.textContent = message;
+
+    document.body.appendChild(feedback);
+
+    // 1秒后移除（比切换提示短一些）
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+        }
+    }, 1000);
+}
+
+/**
+ * 计算优化的EQ设置
+ */
+function calculateOptimizedEQ(frequencies, spectrum, eqFrequencies, lowFreq, highFreq) {
+    const optimizedEQ = new Array(eqFrequencies.length).fill(0);
+
+    eqFrequencies.forEach((eqFreq, index) => {
+        if (eqFreq < lowFreq || eqFreq > highFreq) {
+            // 超出目标范围的频段设置为-12dB
+            optimizedEQ[index] = -12;
+        } else {
+            // 在目标范围内的频段，计算需要的校正量
+            const freqIndex = frequencies.findIndex(f => f >= eqFreq);
+            if (freqIndex !== -1) {
+                // 使用插值获取更精确的值
+                let correction;
+                if (freqIndex === 0 || frequencies[freqIndex] === eqFreq) {
+                    correction = -spectrum[freqIndex]; // 取反，因为我们要校正到0dB
+                } else {
+                    // 线性插值
+                    const f1 = frequencies[freqIndex - 1];
+                    const f2 = frequencies[freqIndex];
+                    const s1 = spectrum[freqIndex - 1];
+                    const s2 = spectrum[freqIndex];
+                    const ratio = (eqFreq - f1) / (f2 - f1);
+                    correction = -(s1 + ratio * (s2 - s1));
+                }
+
+                // 限制在±12dB范围内
+                optimizedEQ[index] = Math.max(-12, Math.min(12, correction));
+            }
+        }
+    });
+
+    return optimizedEQ;
+}
+
+/**
+ * 显示成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建成功提示元素
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #d4edda;
+        color: #155724;
+        padding: 15px 20px;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        font-weight: 500;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        max-width: 400px;
+    `;
+    successDiv.textContent = message;
+
+    document.body.appendChild(successDiv);
+
+    // 3秒后自动移除
+    setTimeout(() => {
+        if (successDiv.parentNode) {
+            successDiv.parentNode.removeChild(successDiv);
+        }
+    }, 3000);
+}
+
+/**
+ * 导出EQ数据
+ */
+function exportEQData(eqType) {
+    const settings = eqType === '15' ? eq15Settings : eq31Settings;
+    const freqs = eqType === '15' ?
+        [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000] :
+        [20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500,
+            630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
+            8000, 10000, 12500, 16000, 20000];
+
+    let csvContent = 'Frequency (Hz),Gain (dB)\n';
+    freqs.forEach((freq, index) => {
+        csvContent += `${freq},${settings[index].toFixed(1)}\n`;
+    });
+
+    downloadCSV(csvContent, `EQ_${eqType}段_设置.csv`);
+}
+
+/**
+ * 导出全部EQ数据
+ */
+function exportBothEQData() {
+    const eq15Freqs = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000];
+    const eq31Freqs = [20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500,
+        630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300,
+        8000, 10000, 12500, 16000, 20000];
+
+    let csvContent = 'EQ Type,Frequency (Hz),Gain (dB)\n';
+
+    eq15Freqs.forEach((freq, index) => {
+        csvContent += `15-Band,${freq},${eq15Settings[index].toFixed(1)}\n`;
+    });
+
+    eq31Freqs.forEach((freq, index) => {
+        csvContent += `31-Band,${freq},${eq31Settings[index].toFixed(1)}\n`;
+    });
+
+    downloadCSV(csvContent, 'EQ_全部设置.csv');
+}
+
+/**
+ * 下载CSV文件
+ */
+function downloadCSV(content, filename) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+/**
+ * 更新频率极限显示
+ */
+function updateFrequencyLimits(limits) {
+    if (!limits) return;
+
+    const eq15LowLimit = document.getElementById('eq15LowLimit');
+    const eq15HighLimit = document.getElementById('eq15HighLimit');
+    const eq31LowLimit = document.getElementById('eq31LowLimit');
+    const eq31HighLimit = document.getElementById('eq31HighLimit');
+
+    if (eq15LowLimit && eq15HighLimit) {
+        eq15LowLimit.textContent = limits.eq_15?.low ?
+            Math.round(limits.eq_15.low) + ' Hz' : '-- Hz';
+        eq15HighLimit.textContent = limits.eq_15?.high ?
+            Math.round(limits.eq_15.high) + ' Hz' : '-- Hz';
+    }
+
+    if (eq31LowLimit && eq31HighLimit) {
+        eq31LowLimit.textContent = limits.eq_31?.low ?
+            Math.round(limits.eq_31.low) + ' Hz' : '-- Hz';
+        eq31HighLimit.textContent = limits.eq_31?.high ?
+            Math.round(limits.eq_31.high) + ' Hz' : '-- Hz';
+    }
+}
+
+/**
+ * 显示音箱问题诊断
+ */
+function displaySpeakerIssues(issues) {
+    const container = document.getElementById('speakerIssues');
+    const content = document.getElementById('issuesContent');
+
+    if (!issues || issues.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    content.innerHTML = '';
+
+    issues.forEach(issue => {
+        const issueItem = document.createElement('div');
+        issueItem.className = `issue-item ${issue.severity}`;
+        issueItem.innerHTML = `
+            <div class="issue-title ${issue.severity}">${issue.issue}</div>
+            <div class="issue-description">${issue.description}</div>
+            <div class="issue-suggestion"><strong>建议:</strong> ${issue.suggestion}</div>
+        `;
+        content.appendChild(issueItem);
+    });
+
+    container.style.display = 'block';
+
+    // 初始化折叠状态
+    initializeSpeakerIssuesState();
+}
+
+
+/**
+ * 显示加载状态
+ */
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('error').style.display = 'none';
+}
+
+/**
+ * 隐藏加载状态
+ */
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+/**
+ * 显示错误信息
+ */
+function showError(message) {
+    const errorDiv = document.getElementById('error');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorDiv.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 隐藏错误信息
+ */
+function hideError() {
+    document.getElementById('error').style.display = 'none';
+}
+
+/**
+ * 显示重新上传卡片
+ */
+function showReuploadCard() {
+    document.getElementById('reuploadCard').style.display = 'block';
+}
+
+/**
+ * 重置时也要断开音频处理
+ */
+function resetToUpload() {
+    // 停止并断开音频
+    if (currentAudio) {
+        currentAudio.pause();
+        URL.revokeObjectURL(currentAudio.src);
+        currentAudio = null;
+    }
+
+    // 断开音频处理
+    disconnectAudioProcessing();
+
+    // 重置所有状态
+    selectedFiles = [];
+    analysisResults = null;
+    currentChart = null;
+    currentEQType = 'none';
+    isPlaying = false;
+    eq15Settings = new Array(15).fill(0);
+    eq31Settings = new Array(31).fill(0);
+    eq15PageIndex = 0;
+    eq31PageIndex = 0;
+
+    // ✅ 新增：重置折叠状态
+    algorithmSectionCollapsed = false;
+    frequencyRangeSectionCollapsed = false;
+
+    // 重置界面
+    document.getElementById('uploadCard').style.display = 'block';
+    document.getElementById('instructionsCard').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('eqConsole').style.display = 'none';
+    document.getElementById('eqPlaceholder').style.display = 'block';
+    document.getElementById('reuploadCard').style.display = 'none';
+    document.getElementById('speakerIssues').style.display = 'none';
+    document.getElementById('audioControlsPanel').style.display = 'none';
+
+    // 清空文件列表
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('audioFiles').value = '';
+    document.getElementById('testAudioFile').value = '';
+    document.getElementById('analyzeBtn').disabled = true;
+
+    // 重置音频信息
+    document.getElementById('audioInfo').textContent = '未选择文件';
+
+    // 清空图表
+    document.getElementById('frequencyChart').innerHTML = '';
+
+    // 重置EQ按钮状态
+    const eqToggleButtons = document.querySelectorAll('.eq-toggle-button');
+    eqToggleButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.eq-toggle-button[data-eq-type="none"]').classList.add('active');
+
+    // 移除折叠区域
+    const algorithmSelector = document.querySelector('.algorithm-section');
+    if (algorithmSelector) {
+        algorithmSelector.remove();
+    }
+
+    hideError();
+    hideLoading();
+}
+
+/**
+ * 切换音箱问题诊断卡片的展开/收起状态
+ */
+function toggleSpeakerIssues() {
+    const content = document.getElementById('issuesContent');
+    const icon = document.getElementById('speakerIssuesIcon');
+
+    speakerIssuesCollapsed = !speakerIssuesCollapsed;
+
+    if (speakerIssuesCollapsed) {
+        content.classList.add('collapsed');
+        icon.classList.add('collapsed');
+        icon.textContent = '▶';
+    } else {
+        content.classList.remove('collapsed');
+        icon.classList.remove('collapsed');
+        icon.textContent = '▼';
+    }
+
+    // 保存状态到localStorage（可选）
+    try {
+        localStorage.setItem('speakerIssuesCollapsed', speakerIssuesCollapsed.toString());
+    } catch (e) {
+        // 忽略localStorage错误
+    }
+}
+
+/**
+ * 初始化音箱问题诊断卡片状态
+ */
+function initializeSpeakerIssuesState() {
+    // 从localStorage恢复状态（可选）
+    try {
+        const savedState = localStorage.getItem('speakerIssuesCollapsed');
+        if (savedState === 'true') {
+            speakerIssuesCollapsed = false; // 先设为false，然后调用toggle
+            toggleSpeakerIssues();
+        }
+    } catch (e) {
+        // 忽略localStorage错误
+    }
+}
+
+/**
+ * 使目标频率范围区域变为可折叠
+ */
+function makeFrequencyRangeCollapsible() {
+    // 修改选择器逻辑：找到所有h4，然后筛选出"目标频率范围"
+    const allH4s = document.querySelectorAll('.eq-section h4');
+    let frequencyRangeSection = null;
+
+    for (let h4 of allH4s) {
+        if (h4.textContent.trim() === '目标频率范围') {
+            frequencyRangeSection = h4;
+            break;
+        }
+    }
+
+    if (!frequencyRangeSection) {
+        console.warn('未找到目标频率范围区域');
+        return;
+    }
+
+    const parentSection = frequencyRangeSection.parentElement;
+
+    // 为父容器添加折叠样式类
+    parentSection.classList.add('collapsible-section', 'frequency-range-section');
+
+    // 创建可折叠的头部
+    const collapsibleHeader = document.createElement('div');
+    collapsibleHeader.className = 'collapsible-header';
+    collapsibleHeader.innerHTML = `
+        <h4>目标频率范围</h4>
+        <span class="collapse-icon" id="frequencyRangeIcon">▼</span>
+    `;
+
+    // 创建可折叠的内容区域
+    const collapsibleContent = document.createElement('div');
+    collapsibleContent.className = 'collapsible-content';
+    collapsibleContent.id = 'frequencyRangeContent';
+
+    // 将原有内容移动到可折叠区域中
+    const originalContent = parentSection.innerHTML;
+    parentSection.innerHTML = '';
+
+    // 重新构建内容，排除原有的h4标题
+    collapsibleContent.innerHTML = originalContent.replace(/<h4[^>]*>目标频率范围<\/h4>/, '');
+
+    // 添加新的结构
+    parentSection.appendChild(collapsibleHeader);
+    parentSection.appendChild(collapsibleContent);
+
+    // 添加点击事件
+    collapsibleHeader.addEventListener('click', toggleFrequencyRangeSection);
+
+    console.log('目标频率范围区域已设置为可折叠');
+}
+
+/**
+ * 切换频率范围区域的折叠状态
+ */
+function toggleFrequencyRangeSection() {
+    const content = document.getElementById('frequencyRangeContent');
+    const icon = document.getElementById('frequencyRangeIcon');
+
+    if (!content || !icon) {
+        console.warn('未找到频率范围折叠元素');
+        return;
+    }
+
+    frequencyRangeSectionCollapsed = !frequencyRangeSectionCollapsed;
+
+    if (frequencyRangeSectionCollapsed) {
+        content.classList.add('collapsed');
+        icon.classList.add('collapsed');
+        icon.textContent = '▶';
+    } else {
+        content.classList.remove('collapsed');
+        icon.classList.remove('collapsed');
+        icon.textContent = '▼';
+    }
+
+    // 保存状态到localStorage（可选）
+    try {
+        localStorage.setItem('frequencyRangeSectionCollapsed', frequencyRangeSectionCollapsed.toString());
+    } catch (e) {
+        // 忽略localStorage错误
+    }
+
+    console.log(`频率范围区域折叠状态: ${frequencyRangeSectionCollapsed ? '折叠' : '展开'}`);
+}
+
+
+
+/**
+ * 切换算法选择区域的折叠状态
+ */
+function toggleAlgorithmSection() {
+    const content = document.querySelector('.algorithm-selector-section .collapsible-content');
+    const icon = document.getElementById('algorithmSectionIcon');
+
+    if (!content || !icon) {
+        console.warn('未找到算法选择折叠元素');
+        return;
+    }
+
+    algorithmSectionCollapsed = !algorithmSectionCollapsed;
+
+    if (algorithmSectionCollapsed) {
+        content.classList.add('collapsed');
+        icon.classList.add('collapsed');
+        icon.textContent = '▶';
+    } else {
+        content.classList.remove('collapsed');
+        icon.classList.remove('collapsed');
+        icon.textContent = '▼';
+    }
+
+    // 保存状态到localStorage（可选）
+    try {
+        localStorage.setItem('algorithmSectionCollapsed', algorithmSectionCollapsed.toString());
+    } catch (e) {
+        // 忽略localStorage错误
+    }
+
+    console.log(`算法选择区域折叠状态: ${algorithmSectionCollapsed ? '折叠' : '展开'}`);
+}
+
+
+/**
+ * 初始化所有折叠区域的状态
+ */
+function initializeCollapsibleSections() {
+    // 恢复算法选择区域的状态
+    try {
+        const algorithmState = localStorage.getItem('algorithmSectionCollapsed');
+        if (algorithmState === 'true') {
+            algorithmSectionCollapsed = false; // 先设为false，然后调用toggle
+            setTimeout(() => {
+                toggleAlgorithmSection();
+            }, 100);
+        }
+    } catch (e) {
+        console.warn('恢复算法选择区域状态失败:', e);
+    }
+
+    // 恢复频率范围区域的状态
+    try {
+        const frequencyState = localStorage.getItem('frequencyRangeSectionCollapsed');
+        if (frequencyState === 'true') {
+            frequencyRangeSectionCollapsed = false; // 先设为false，然后调用toggle
+            setTimeout(() => {
+                toggleFrequencyRangeSection();
+            }, 150);
+        }
+    } catch (e) {
+        console.warn('恢复频率范围区域状态失败:', e);
+    }
+
+    console.log('折叠区域状态初始化完成');
+}
+
+/**
+ * 改进的算法选择器添加函数 - 添加折叠功能
+ */
+function addSmoothingControlToEQAreaWithCollapse() {
+    const eqConsole = document.getElementById('eqConsole');
+
+    // 检查是否已经添加过控件
+    if (document.getElementById('algorithmSelector')) {
+        return;
+    }
+
+    // 创建算法选择器区域 - 可折叠版本
+    const algorithmSelectorSection = document.createElement('div');
+    algorithmSelectorSection.className = 'eq-section algorithm-selector-section collapsible-section';
+    algorithmSelectorSection.style.cssText = 'border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 25px;';
+
+    algorithmSelectorSection.innerHTML = `
+        <div class="collapsible-header" onclick="toggleAlgorithmSection()">
+            <h4>EQ算法选择</h4>
+            <span class="collapse-icon" id="algorithmSectionIcon">▼</span>
+        </div>
+        <div class="collapsible-content" id="algorithmSectionContent">
+            <div id="algorithmSelector" class="algorithm-selector">
+                <div class="algorithm-option">
+                    <label class="algorithm-label">
+                        <input type="radio" name="eqAlgorithm" value="smoothed" id="algorithmSmoothed" checked>
+                        <span class="radio-checkmark"></span>
+                        <div class="algorithm-info">
+                            <span class="algorithm-title">平滑优化算法</span>
+                            <span class="algorithm-desc">减少400Hz以上频段共鸣，听感更自然（推荐）</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="algorithm-option">
+                    <label class="algorithm-label">
+                        <input type="radio" name="eqAlgorithm" value="precise" id="algorithmPrecise">
+                        <span class="radio-checkmark"></span>
+                        <div class="algorithm-info">
+                            <span class="algorithm-title">精确校正算法</span>
+                            <span class="algorithm-desc">严格按测量数据校正，适合专业监听</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="algorithm-actions">
+                <button class="btn btn-algorithm" onclick="applySelectedAlgorithm()">应用选择的算法</button>
+                <div class="algorithm-status" id="currentAlgorithmStatus">
+                    当前：平滑优化算法
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 插入到合适位置 - 需要更精确的选择器
+    // 找到"数据导出"之后的第一个eq-section
+    const allSections = eqConsole.querySelectorAll('.eq-section');
+    let targetSection = null;
+
+    // 寻找"目标频率范围"区域作为插入点
+    for (let section of allSections) {
+        const h4 = section.querySelector('h4');
+        if (h4 && h4.textContent.trim() === '目标频率范围') {
+            targetSection = section;
+            break;
+        }
+    }
+
+    if (targetSection) {
+        // 在"目标频率范围"之前插入
+        eqConsole.insertBefore(algorithmSelectorSection, targetSection);
+    } else {
+        // 如果没找到，插入到第二个位置（数据导出之后）
+        const firstEQSection = eqConsole.querySelector('.eq-section:nth-child(2)');
+        if (firstEQSection) {
+            eqConsole.insertBefore(algorithmSelectorSection, firstEQSection);
+        } else {
+            eqConsole.appendChild(algorithmSelectorSection);
+        }
+    }
+
+    // 添加事件监听器
+    initializeAlgorithmSelector();
+
+    console.log('算法选择器（可折叠版本）添加完成');
+}
+
+// 导出主要函数供HTML调用
+window.analyzeAudio = analyzeAudio;
+window.removeFile = removeFile;
+window.resetToUpload = resetToUpload;
+window.changePage = changePage;
+window.resetEQ = resetEQ;
+window.zeroAllEQ = zeroAllEQ;
+window.exportEQData = exportEQData;
+window.exportBothEQData = exportBothEQData;
+window.updateFrequencyRange = updateFrequencyRange;
+window.reoptimizeEQ = reoptimizeEQ;
+window.togglePlayPause = togglePlayPause;
+window.stopAudio = stopAudio;
+window.rewindAudio = rewindAudio;
+window.seekAudio = seekAudio;
+
+// 导出函数
+window.loadAudioFile = loadAudioFile;
+window.togglePlayPause = togglePlayPause;
+window.setEQValue = setEQValue;
+window.resetToUpload = resetToUpload;
+window.testLoudnessMatching = testLoudnessMatching;
+
+window.toggleSpeakerIssues = toggleSpeakerIssues;
+
+window.applySelectedAlgorithm = applySelectedAlgorithm;
+
+window.toggleFrequencyRangeSection = toggleFrequencyRangeSection;
+window.toggleAlgorithmSection = toggleAlgorithmSection;
+// ===== web.js 结束 =====
+
+</script>
+</body>
+
+</html>
